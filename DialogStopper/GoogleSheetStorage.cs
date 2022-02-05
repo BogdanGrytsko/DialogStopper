@@ -9,7 +9,6 @@ namespace DialogStopper
 
         public void SyncAllHistory()
         {
-            throw new NotImplementedException();
         }
     }
 }

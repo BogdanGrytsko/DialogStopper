@@ -12,7 +12,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="api-keys.json" />
+      <None Update="api-keys.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
