@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace DialogStopper
 {
@@ -9,9 +10,9 @@ namespace DialogStopper
     {
         private const string logFile = "Log.txt";
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            new GoogleSheetStorage().SyncAllHistory();
+            await new GoogleSheetStorage().SyncAllHistory();
             var points = new List<long>();
             var sw = new Stopwatch();
             while (true)
