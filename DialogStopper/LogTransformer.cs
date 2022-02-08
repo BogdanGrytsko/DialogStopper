@@ -47,14 +47,16 @@ namespace DialogStopper
 
         private static IEnumerable<MeditationEntry> GetEntries(string[] lines)
         {
-            foreach (var line in lines)
-            {
-                var timeIdx = line.LastIndexOf(':');
-                var arrIdx = line.IndexOf('.');
-                var vals = line.Substring(arrIdx + 2).Split(',');
-                yield return new MeditationEntry(DateTime.Parse(line.Substring(0, timeIdx)),
-                    vals.Select(x => int.Parse(x)).ToArray());
-            }
+            return lines.Select(GetEntry);
+        }
+
+        public static MeditationEntry GetEntry(string line)
+        {
+            var timeIdx = line.LastIndexOf(':');
+            var arrIdx = line.IndexOf('.');
+            var vals = line.Substring(arrIdx + 2).Split(',');
+            return new MeditationEntry(DateTime.Parse(line.Substring(0, timeIdx)),
+                vals.Select(x => int.Parse(x)).ToArray());
         }
     }
 }
