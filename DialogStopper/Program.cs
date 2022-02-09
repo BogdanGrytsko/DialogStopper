@@ -12,9 +12,11 @@ namespace DialogStopper
 
         static async Task Main(string[] args)
         {
-            await new GoogleSheetStorage().UploadData(logFile);
+            // await new GoogleSheetStorage().UploadData(logFile);
+            // await new GoogleSheetStorage().UpdateStats();
             var points = new List<long>();
             var sw = new Stopwatch();
+            Console.WriteLine("Program Started. Press C to start logging");
             while (true)
             {
                 var c = Console.ReadKey();

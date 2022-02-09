@@ -2,5 +2,5 @@
 
 namespace DialogStopper
 {
-    public record MeditationEntry(DateTime Time, int[] Values);
+    public record MeditationEntry(DateTime TimeStamp, int[] Points);
 }

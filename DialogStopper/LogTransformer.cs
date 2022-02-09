@@ -24,7 +24,7 @@ namespace DialogStopper
 
         private static void AddEntry(StreamWriter sw, MeditationEntry entry, int i)
         {
-            foreach (var entryValue in entry.Values)
+            foreach (var entryValue in entry.Points)
             {
                 sw.WriteLine($"{entryValue}{GetSeparator(i)}{i}");
             }
@@ -42,7 +42,7 @@ namespace DialogStopper
 
         private static string GetHeaders(List<MeditationEntry> entries)
         {
-            return string.Join('\t', entries.Select(x => x.Time.ToString("MM/dd/yyyy")));
+            return string.Join('\t', entries.Select(x => x.TimeStamp.ToString("MM/dd/yyyy")));
         }
 
         private static IEnumerable<MeditationEntry> GetEntries(string[] lines)
