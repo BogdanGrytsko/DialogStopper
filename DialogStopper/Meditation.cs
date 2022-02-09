@@ -4,18 +4,17 @@ using System.Linq;
 
 namespace DialogStopper
 {
-    public class MeditationEntry
+    public class Meditation
     {
         public DateTime TimeStamp { get; }
-        public List<long> Points { get; }
-        
         public int Count { get; }
         public double Avg { get; private set; }
         public double Min { get; private set; }
         public double Max { get; private set; }
         public double Std { get; private set; }
+        public List<long> Points { get; }
 
-        public MeditationEntry(DateTime timeStamp, List<long> points)
+        public Meditation(DateTime timeStamp, List<long> points)
         {
             TimeStamp = timeStamp;
             Points = points;
@@ -55,12 +54,12 @@ namespace DialogStopper
             return segments;
         }
 
-        public static MeditationEntry FromTxtFile(string line)
+        public static Meditation FromTxtFile(string line)
         {
             var timeIdx = line.LastIndexOf(':');
             var arrIdx = line.IndexOf('.');
             var vals = line.Substring(arrIdx + 2).Split(',');
-            return new MeditationEntry(DateTime.Parse(line.Substring(0, timeIdx)),
+            return new Meditation(DateTime.Parse(line.Substring(0, timeIdx)),
                 vals.Select(long.Parse).ToList());
         }
     };

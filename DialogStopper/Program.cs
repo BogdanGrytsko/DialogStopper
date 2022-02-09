@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace DialogStopper
@@ -12,8 +11,8 @@ namespace DialogStopper
 
         static async Task Main(string[] args)
         {
-            // await new GoogleSheetStorage().AddFromFile(logFile);
-            // await new GoogleSheetStorage().UpdateStats();
+            // await new MeditationGoogleSheetStorage().AddFromFile(logFile);
+            // await new MeditationGoogleSheetStorage().UpdateStats();
             var points = new List<long>();
             var sw = new Stopwatch();
             Console.WriteLine("Program Started. Press C to start logging");
@@ -40,7 +39,7 @@ namespace DialogStopper
                 }
             }
 
-            await new GoogleSheetStorage().Add(new MeditationEntry(DateTime.UtcNow, points));
+            await new MeditationGoogleSheetStorage().Add(new Meditation(DateTime.UtcNow, points));
         }
     }
 }
