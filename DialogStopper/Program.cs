@@ -12,7 +12,7 @@ namespace DialogStopper
 
         static async Task Main(string[] args)
         {
-            // await new GoogleSheetStorage().UploadData(logFile);
+            // await new GoogleSheetStorage().AddFromFile(logFile);
             // await new GoogleSheetStorage().UpdateStats();
             var points = new List<long>();
             var sw = new Stopwatch();
@@ -39,9 +39,8 @@ namespace DialogStopper
                     break;
                 }
             }
-            
-            File.AppendAllText(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
-            LogTransformer.ToGoogleSheets(logFile);
+
+            await new GoogleSheetStorage().Add(new MeditationEntry(DateTime.UtcNow, points));
         }
     }
 }

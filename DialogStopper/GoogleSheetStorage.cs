@@ -29,24 +29,33 @@ namespace DialogStopper
             });
         }
         
-        public async Task UploadData(string logFile)
+        public async Task AddFromFile(string logFile)
         {
             var lines = await File.ReadAllLinesAsync(logFile);
-            await UploadData(lines);
+            var entries = lines.Select(MeditationEntry.FromTxtFile).ToList();
+            await Add(entries, true);
         }
 
-        public async Task UploadData(string[] lines)
+        public async Task Add(List<MeditationEntry> meditationEntries, bool addHeaders)
         {
             var range = $"{meditationSheet}!A:G";
             var valueRange = new ValueRange {Values = new List<IList<object>>()};
-            valueRange.Values.Add(new List<object> { nameof(MeditationEntry.TimeStamp), "Count", "Avg", "Min", "Max", "Std", nameof(MeditationEntry.Points) });
-            foreach (var line in lines)
+            if (addHeaders)
             {
-                var (dateTime, values) = LogTransformer.GetEntry(line);
+                valueRange.Values.Add(new List<object>
+                {
+                    nameof(MeditationEntry.TimeStamp), nameof(MeditationEntry.Count), nameof(MeditationEntry.Avg),
+                    nameof(MeditationEntry.Min), nameof(MeditationEntry.Max), nameof(MeditationEntry.Std),
+                    nameof(MeditationEntry.Points)
+                });
+            }
+
+            foreach (var entry in meditationEntries)
+            {
                 var rowValues = new List<object>
                 {
-                    dateTime, values.Length, string.Empty, string.Empty, string.Empty, string.Empty,
-                    string.Join(";", values)
+                    entry.TimeStamp, entry.Count, entry.Avg, entry.Min, entry.Max, entry.Std,
+                    string.Join(";", entry.Points)
                 };
                 valueRange.Values.Add(rowValues);
             }
@@ -70,14 +79,10 @@ namespace DialogStopper
             foreach (var line in values.Skip(1))
             {
                 var pointsStr =  ((string)line[map[nameof(MeditationEntry.Points)]]).Split(";", StringSplitOptions.RemoveEmptyEntries);
-                var points = pointsStr.Select(int.Parse).ToList();
-                var segments = GetSegments(points);
-                var avg = Math.Round(segments.Average());
-                var min = segments.Min();
-                var max = segments.Max();
-                var std = Math.Round(StandardDeviation(segments));
+                var points = pointsStr.Select(long.Parse).ToList();
+                var entry = new MeditationEntry(DateTime.MinValue, points);
                 
-                lists.Add(new List<object> {avg, min, max, std});
+                lists.Add(new List<object> {Math.Round(entry.Avg), entry.Min, entry.Max, Math.Round(entry.Std)});
             }
 
             var valueRange = new ValueRange { Values = lists };
@@ -87,29 +92,6 @@ namespace DialogStopper
             await updateRequest.ExecuteAsync();
         }
         
-        private static double StandardDeviation(IList<int> sequence)
-        {
-            if (!sequence.Any()) return 0;
-            
-            var average = sequence.Average();
-            var sum = sequence.Sum(d => Math.Pow(d - average, 2));
-            var result = Math.Sqrt(sum / (sequence.Count - 1));
-            return result;
-        }
-
-        private List<int> GetSegments(List<int> points)
-        {
-            var segments = new List<int>();
-            var prev = 0; 
-            foreach (var p in points)
-            {
-                var segment = p - prev;
-                segments.Add(segment);
-                prev = p;
-            }
-            return segments;
-        }
-
         private static Dictionary<string, int> GetHeaderMap(IList<object> headers)
         {
             var headerMap = new Dictionary<string, int>();
@@ -119,6 +101,11 @@ namespace DialogStopper
             }
 
             return headerMap;
+        }
+
+        public async Task Add(MeditationEntry meditationEntry)
+        {
+            await Add(new List<MeditationEntry> { meditationEntry }, false);
         }
     }
 }
