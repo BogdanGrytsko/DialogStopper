@@ -25,20 +25,13 @@ namespace DialogStopper
 
         public async Task UpdateStats()
         {
-            var rangeOfExisting = $"{SheetName}!A1:G";
-            var request = SheetsService.Spreadsheets.Values.Get(sheetId, rangeOfExisting);
-            var response = await request.ExecuteAsync();
-            var values = response.Values;
-            var map = GetHeaderMap(values.First());
+            var data = await Get();
 
-            var updateRange = $"{SheetName}!C2:F{values.Count}";
+            var updateRange = $"{SheetName}!C2:F{data.Count + 1}";
             var lists = new List<IList<object>>();
-            foreach (var line in values.Skip(1))
+            foreach (var line in data)
             {
-                var pointsStr =  ((string)line[map[nameof(Meditation.Points)]]).Split(";", StringSplitOptions.RemoveEmptyEntries);
-                var points = pointsStr.Select(long.Parse).ToList();
-                var entry = new Meditation(DateTime.MinValue, points);
-                
+                var entry = new Meditation(DateTime.MinValue, line.Points);
                 lists.Add(new List<object> {Math.Round(entry.Avg), entry.Min, entry.Max, Math.Round(entry.Std)});
             }
 
@@ -47,17 +40,6 @@ namespace DialogStopper
             updateRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await updateRequest.ExecuteAsync();
-        }
-        
-        private static Dictionary<string, int> GetHeaderMap(IList<object> headers)
-        {
-            var headerMap = new Dictionary<string, int>();
-            for (int i = 0; i < headers.Count; i++)
-            {
-                headerMap.Add(headers[i].ToString(), i);
-            }
-
-            return headerMap;
         }
     }
 }

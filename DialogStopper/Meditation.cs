@@ -6,29 +6,33 @@ namespace DialogStopper
 {
     public class Meditation
     {
-        public DateTime TimeStamp { get; }
-        public int Count { get; }
+        public DateTime TimeStamp { get; private set; }
+        public int Count => Points?.Count ?? 0;
         public double Avg { get; private set; }
         public double Min { get; private set; }
         public double Max { get; private set; }
         public double Std { get; private set; }
-        public List<long> Points { get; }
+        public List<long> Points { get; private set; }
 
         public Meditation(DateTime timeStamp, List<long> points)
         {
             TimeStamp = timeStamp;
             Points = points;
-            Count = points.Count;
             Calculate();
+        }
+
+        //used in reflection
+        public Meditation()
+        {
         }
 
         private void Calculate()
         {
             var segments = GetSegments(Points);
-            Avg = segments.Average();
+            Avg = Math.Round(segments.Average());
             Min = segments.Min();
             Max = segments.Max();
-            Std = StandardDeviation(segments);
+            Std = Math.Round(StandardDeviation(segments));
         }
         
         private static double StandardDeviation(ICollection<long> sequence)
