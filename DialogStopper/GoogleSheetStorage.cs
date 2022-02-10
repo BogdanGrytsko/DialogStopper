@@ -37,8 +37,6 @@ namespace DialogStopper
 
         public async Task Add(List<T> data, bool addHeaders)
         {
-            //todo : A:G shouldn't be hardcoded
-            var range = $"{SheetName}!A:G";
             var valueRange = new ValueRange {Values = new List<IList<object>>()};
             if (addHeaders)
             {
@@ -55,8 +53,7 @@ namespace DialogStopper
                 var rowValues = new List<object>(PropertyInfos.Length);
                 foreach (var prop in PropertyInfos)
                 {
-                    //todo fix
-                    var value = GetPropValue(entry, prop.Name);
+                    var value = GetPropValue(entry, prop);
                     if (IsEnumerable(prop))
                     {
                         var prepared = ((IEnumerable)value).Cast<object>().Select(x => x.ToString());
@@ -70,7 +67,7 @@ namespace DialogStopper
                 valueRange.Values.Add(rowValues);
             }
 
-            var appendRequest = SheetsService.Spreadsheets.Values.Append(valueRange, SheetId, range);
+            var appendRequest = SheetsService.Spreadsheets.Values.Append(valueRange, SheetId, GetRange());
             appendRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
             await appendRequest.ExecuteAsync();
@@ -86,11 +83,21 @@ namespace DialogStopper
             await Add(new List<T> { entry }, false);
         }
 
+        protected string GetRange(int? startRow = null, int? endRow = null)
+        {
+            return $"{SheetName}!A{startRow}:{GetEndLetter()}{endRow}";
+        }
+
+        private string GetEndLetter()
+        {
+            if (PropertyInfos.Length > 26)
+                throw new Exception("Not supported yet");
+            return ((char)('A' - 1 + PropertyInfos.Length)).ToString();
+        }
+        
         public async Task<List<T>> Get(int? endRow = null)
         {
-            //todo: fix A G
-            var rangeOfExisting = $"{SheetName}!A{1}:G{endRow}";
-            var request = SheetsService.Spreadsheets.Values.Get(SheetId, rangeOfExisting);
+            var request = SheetsService.Spreadsheets.Values.Get(SheetId, GetRange(1, endRow));
             var response = await request.ExecuteAsync();
             var values = response.Values;
             
@@ -141,15 +148,22 @@ namespace DialogStopper
             return headerMap;
         }
         
-        public static object GetPropValue(object src, string propName)
+        public static object GetPropValue(object src, PropertyInfo propertyInfo)
         {
-            return typeof(T).GetProperty(propName).GetValue(src, null);
+            return propertyInfo.GetValue(src, null);
         }
 
         public static void SetPropValue(object src, PropertyInfo propertyInfo, object value)
         {
             if (propertyInfo.CanWrite)
                 propertyInfo.SetValue(src, value);
+        }
+
+        public async Task Delete(int row)
+        {
+            var requestBody = new ClearValuesRequest();
+            var deleteRequest = SheetsService.Spreadsheets.Values.Clear(requestBody, SheetId, GetRange(row, row));
+            await deleteRequest.ExecuteAsync();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace DialogStopper
         {
             // await new MeditationGoogleSheetStorage().AddFromFile(logFile);
             // await new MeditationGoogleSheetStorage().UpdateStats();
+            // var x = await new MeditationGoogleSheetStorage().Get();
+            // await new MeditationGoogleSheetStorage().Delete(189);
             var points = new List<long>();
             var sw = new Stopwatch();
             Console.WriteLine("Program Started. Press C to start logging");
