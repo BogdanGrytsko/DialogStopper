@@ -10,7 +10,7 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 
-namespace DialogStopper
+namespace DialogStopper.Storage
 {
     public class GoogleSheetStorage<T> where T : new()
     {
@@ -159,11 +159,27 @@ namespace DialogStopper
                 propertyInfo.SetValue(src, value);
         }
 
-        public async Task Delete(int row)
+        public async Task Delete(int startRow, int? endRow = null)
         {
             var requestBody = new ClearValuesRequest();
-            var deleteRequest = SheetsService.Spreadsheets.Values.Clear(requestBody, SheetId, GetRange(row, row));
+            var deleteRequest =
+                SheetsService.Spreadsheets.Values.Clear(requestBody, SheetId, GetRange(startRow, endRow ?? startRow));
             await deleteRequest.ExecuteAsync();
+        }
+
+        public async Task Update(List<T> data)
+        {
+            //todo: get by range, headers needed?
+            var sheetData = Get();
+            
+            var lists = new List<IList<object>>();
+            
+            var valueRange = new ValueRange { Values = lists };
+            //todo : fix
+            var updateRequest = SheetsService.Spreadsheets.Values.Update(valueRange, SheetId, GetRange(-1, -1));
+            updateRequest.ValueInputOption =
+                SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await updateRequest.ExecuteAsync();
         }
     }
 }

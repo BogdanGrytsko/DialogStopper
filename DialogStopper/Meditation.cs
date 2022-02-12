@@ -26,7 +26,7 @@ namespace DialogStopper
         {
         }
 
-        private void Calculate()
+        public void Calculate()
         {
             var segments = GetSegments(Points);
             Avg = Math.Round(segments.Average());

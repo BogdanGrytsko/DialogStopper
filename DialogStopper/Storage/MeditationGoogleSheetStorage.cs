@@ -1,12 +1,12 @@
-﻿using Google.Apis.Sheets.v4;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 
-namespace DialogStopper
+namespace DialogStopper.Storage
 {
     public class MeditationGoogleSheetStorage : GoogleSheetStorage<Meditation>
     {
