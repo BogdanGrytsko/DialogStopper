@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using DialogStopper.Storage;
 
@@ -41,7 +42,8 @@ namespace DialogStopper
                     break;
                 }
             }
-
+            
+            File.AppendAllText(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
             await new MeditationGoogleSheetStorage().Add(new Meditation(DateTime.UtcNow, points));
         }
     }
