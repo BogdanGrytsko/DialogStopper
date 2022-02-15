@@ -1,7 +1,10 @@
-﻿namespace Trader
+﻿using System;
+
+namespace Trader
 {
-    public class Bar
+    public class Candle
     {
+        public DateTime Date { get; set; }
         public decimal Open { get; set; }
         public decimal Close { get; set; }
         public decimal High { get; set; }
