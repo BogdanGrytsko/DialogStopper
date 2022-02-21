@@ -10,5 +10,14 @@ namespace Trader
         public decimal High { get; set; }
         public decimal Low { get; set; }
         public decimal Volume { get; set; }
+
+        public bool IsUp => Change >= 0;
+        public bool IsDown => Change < 0;
+        public decimal Change => Close - Open;
+
+        public override string ToString()
+        {
+            return $"{Date} {Change}";
+        }
     }
 }

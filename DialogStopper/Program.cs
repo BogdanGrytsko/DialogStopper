@@ -45,6 +45,7 @@ namespace DialogStopper
             
             File.AppendAllText(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
             await new MeditationGoogleSheetStorage().Add(new Meditation(DateTime.UtcNow, points));
+            Console.WriteLine("Store completed");
         }
     }
 }
