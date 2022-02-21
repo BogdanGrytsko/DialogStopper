@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Trader.Index;
 using Trader.MyFxBook;
 
 namespace Trader
@@ -23,6 +24,8 @@ namespace Trader
             //we have to put precision - e.g number of subtrends to find
             //list of maximums of updowns, then order by timestamp
             //how many maximums? 
+
+            var rsi = new RSI().CalculateMany(data);
         }
 
         private static List<Candle> GetUpDownPoints(List<Candle> data)
