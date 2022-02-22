@@ -21,20 +21,18 @@ namespace Trader.Index
             decimal gain = 0, loss = 0, previousGain = 0, previousLoss = 0;
             for (int i = 0; i < candles.Count; i++)
             {
-                var addCandle = candles[i];
-                if (addCandle.IsUp)
-                    gain += addCandle.PercentChange;
-                else
-                    loss += Math.Abs(addCandle.PercentChange);
+                var currCandle = candles[i];
+                var percentChange = i == 0 ? currCandle.PercentChange : GetPercentChange(currCandle, candles[i - 1]);
+                currCandle.ClosePercentChange = percentChange;
+                gain += Math.Max(percentChange, 0);
+                loss += Math.Max(percentChange * -1, 0);
                 
                 var subCandleIndex = i - lookBackBarsCount;
                 if (subCandleIndex >= 0)
                 {
                     var subCandle = candles[subCandleIndex];
-                    if (subCandle.IsUp)
-                        gain -= subCandle.PercentChange;
-                    else
-                        loss -= Math.Abs(subCandle.PercentChange);
+                    gain -= Math.Max(subCandle.ClosePercentChange, 0);
+                    loss -= Math.Max(subCandle.ClosePercentChange * -1, 0);
                 }
 
                 if (i < lookBackBarsCount - 1)
@@ -44,15 +42,14 @@ namespace Trader.Index
                 {
                     var rs = gain / loss;
                     var rsi = GetRsi(rs);
-                    indicators.Add(new Indicator(rsi, rsi, addCandle.Date));
+                    indicators.Add(new Indicator(rsi, currCandle.Date));
                 }
                 else
                 {
                     var movingGain = previousGain * (lookBackBarsCount - 1) + gain;
                     var movingLoss = previousLoss * (lookBackBarsCount - 1) + loss;
                     var movingRs = movingGain / movingLoss;
-                    var rsi = GetRsi(gain / loss);
-                    indicators.Add(new Indicator(rsi ,GetRsi(movingRs), addCandle.Date));
+                    indicators.Add(new Indicator(GetRsi(movingRs), currCandle.Date));
                 }
                 
                 previousGain = gain;
@@ -61,11 +58,16 @@ namespace Trader.Index
             return indicators;
         }
 
+        private static decimal GetPercentChange(Candle curr, Candle prev)
+        {
+            return (curr.Close - prev.Close) / curr.Close;
+        }
+
         public static decimal GetRsi(decimal rs)
         {
             if (rs < 0)
                 throw new ArgumentException("Can't be negative", nameof(rs));
-            return 100 - (100 / (1 + rs));
+            return rs * 100 / (1 + rs);
         }
     }
 }

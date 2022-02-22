@@ -15,6 +15,7 @@ namespace Trader
         public bool IsDown => Change < 0;
         public decimal Change => Close - Open;
         public decimal PercentChange => Change / Close;
+        public decimal ClosePercentChange { get; set; }
 
         public override string ToString()
         {

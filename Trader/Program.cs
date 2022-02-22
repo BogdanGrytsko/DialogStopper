@@ -14,7 +14,7 @@ namespace Trader
         {
             //https://youtu.be/LfysewNHmDE
             var data = new MyFxBookDataImporter().LoadData("MyFxBook\\EURUSD_5min_FEB_14-15_2022.csv");
-            data = data.Where(x => x.Date.Hour >= 10 && x.Date.Hour <= 18).Reverse().ToList();
+            data = data.Where(x => x.Date < new DateTime(2022, 2, 15)).Reverse().ToList();
             var upPoints = GetUpDownPoints(data).ToList();
             var downPoints = GetDownUpPoints(data).ToList();
             //how to get local ups?
