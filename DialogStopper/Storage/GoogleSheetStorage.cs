@@ -23,7 +23,7 @@ namespace DialogStopper.Storage
 
         public GoogleSheetStorage(string sheetId)
         {
-            this.SheetId = sheetId;
+            SheetId = sheetId;
             using var fs = File.OpenRead("api-keys.json");
             var credential = GoogleCredential.FromStream(fs).CreateScoped(scopes);
             SheetsService = new SheetsService(new BaseClientService.Initializer
@@ -31,9 +31,10 @@ namespace DialogStopper.Storage
                 HttpClientInitializer = credential,
                 ApplicationName = nameof(MeditationGoogleSheetStorage) + "DialogStopper"
             });
+            SheetName = $"{typeof(T).Name}s";
         }
 
-        protected virtual string SheetName => $"{typeof(T).Name}s";
+        public string SheetName { protected get; set; }
 
         public async Task Add(List<T> data, bool addHeaders)
         {

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DialogStopper.Storage;
 using Trader.Index;
 using Trader.MyFxBook;
 
@@ -12,7 +14,7 @@ namespace Trader
         {
             //https://youtu.be/LfysewNHmDE
             var data = new MyFxBookDataImporter().LoadData("MyFxBook\\EURUSD_5min_FEB_14-15_2022.csv");
-            data = data.Where(x => x.Date.Hour >= 12 && x.Date.Hour <= 18).Reverse().ToList();
+            data = data.Where(x => x.Date.Hour >= 10 && x.Date.Hour <= 18).Reverse().ToList();
             var upPoints = GetUpDownPoints(data).ToList();
             var downPoints = GetDownUpPoints(data).ToList();
             //how to get local ups?
@@ -26,6 +28,10 @@ namespace Trader
             //how many maximums? 
 
             var rsi = new RSI().CalculateMany(data);
+            var storage = new GoogleSheetStorage<FormatIndicator>("1cJzzIJPyMIfoMkwTQVIsjG21zqgPg4bcaDcfFeEK8lY") {SheetName = "RSI"};
+            await storage.Delete(1, rsi.Count + 1);
+            await storage.Add(rsi.Select(FormatIndicator.Get5MinIndicator).ToList(), true);
+            Console.WriteLine("Finished");
         }
 
         private static List<Candle> GetUpDownPoints(List<Candle> data)

@@ -6,27 +6,17 @@ namespace Trader.Index
     /// <summary>
     /// Relative Strength Index
     /// </summary>
-    public class RSI : IIndex
+    public class RSI
     {
-        private int lookBackBarsCount;
+        private readonly int lookBackBarsCount;
 
         public RSI(int lookBackBarsCount = 14)
         {
             this.lookBackBarsCount = lookBackBarsCount;
         }
         
-        public decimal Calculate(List<Candle> candles)
-        {
-            if (candles.Count < lookBackBarsCount)
-                throw new Exception("Not Enough data. TODO");
-
-            
-            throw new System.NotImplementedException();
-        }
-
         public List<Indicator> CalculateMany(List<Candle> candles)
         {
-            //todo : test. Also should produce with and without SMA
             var indicators = new List<Indicator>();
             decimal gain = 0, loss = 0, previousGain = 0, previousLoss = 0;
             for (int i = 0; i < candles.Count; i++)
@@ -42,9 +32,9 @@ namespace Trader.Index
                 {
                     var subCandle = candles[subCandleIndex];
                     if (subCandle.IsUp)
-                        gain -= addCandle.PercentChange;
+                        gain -= subCandle.PercentChange;
                     else
-                        loss -= Math.Abs(addCandle.PercentChange);
+                        loss -= Math.Abs(subCandle.PercentChange);
                 }
 
                 if (i < lookBackBarsCount - 1)
@@ -53,14 +43,16 @@ namespace Trader.Index
                 if (i == lookBackBarsCount - 1)
                 {
                     var rs = gain / loss;
-                    indicators.Add(new Indicator(GetRsi(rs), addCandle.Date));
+                    var rsi = GetRsi(rs);
+                    indicators.Add(new Indicator(rsi, rsi, addCandle.Date));
                 }
                 else
                 {
                     var movingGain = previousGain * (lookBackBarsCount - 1) + gain;
                     var movingLoss = previousLoss * (lookBackBarsCount - 1) + loss;
-                    var rs = movingGain / movingLoss;
-                    indicators.Add(new Indicator(GetRsi(rs), addCandle.Date));
+                    var movingRs = movingGain / movingLoss;
+                    var rsi = GetRsi(gain / loss);
+                    indicators.Add(new Indicator(rsi ,GetRsi(movingRs), addCandle.Date));
                 }
                 
                 previousGain = gain;
@@ -69,9 +61,11 @@ namespace Trader.Index
             return indicators;
         }
 
-        private static decimal GetRsi(decimal rs)
+        public static decimal GetRsi(decimal rs)
         {
-            return 100 - Math.Floor(100 / (1 + rs));
+            if (rs < 0)
+                throw new ArgumentException("Can't be negative", nameof(rs));
+            return 100 - (100 / (1 + rs));
         }
     }
 }

@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogStopper", "DialogStop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trader", "Trader\Trader.csproj", "{FC9E906D-BCFD-4458-93B9-18A7AB8B1C5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraderTest", "TraderTest\TraderTest.csproj", "{E7F456AB-D86F-4993-B2B2-2A4DED394DCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{FC9E906D-BCFD-4458-93B9-18A7AB8B1C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC9E906D-BCFD-4458-93B9-18A7AB8B1C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC9E906D-BCFD-4458-93B9-18A7AB8B1C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F456AB-D86F-4993-B2B2-2A4DED394DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F456AB-D86F-4993-B2B2-2A4DED394DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F456AB-D86F-4993-B2B2-2A4DED394DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F456AB-D86F-4993-B2B2-2A4DED394DCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
