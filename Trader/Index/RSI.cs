@@ -8,11 +8,11 @@ namespace Trader.Index
     /// </summary>
     public class RSI
     {
-        private readonly int lookBackBarsCount;
+        private readonly int length;
 
-        public RSI(int lookBackBarsCount = 14)
+        public RSI(int length = 14)
         {
-            this.lookBackBarsCount = lookBackBarsCount;
+            this.length = length;
         }
         
         public List<Indicator> CalculateMany(List<Candle> candles)
@@ -27,7 +27,7 @@ namespace Trader.Index
                 gain += Math.Max(percentChange, 0);
                 loss += Math.Max(percentChange * -1, 0);
                 
-                var subCandleIndex = i - lookBackBarsCount;
+                var subCandleIndex = i - length;
                 if (subCandleIndex >= 0)
                 {
                     var subCandle = candles[subCandleIndex];
@@ -35,10 +35,10 @@ namespace Trader.Index
                     loss -= Math.Max(subCandle.ClosePercentChange * -1, 0);
                 }
 
-                if (i < lookBackBarsCount - 1)
+                if (i < length - 1)
                     continue;
                 
-                if (i == lookBackBarsCount - 1)
+                if (i == length - 1)
                 {
                     var rs = gain / loss;
                     var rsi = GetRsi(rs);
@@ -46,8 +46,8 @@ namespace Trader.Index
                 }
                 else
                 {
-                    var movingGain = previousGain * (lookBackBarsCount - 1) + gain;
-                    var movingLoss = previousLoss * (lookBackBarsCount - 1) + loss;
+                    var movingGain = previousGain * (length - 1) + gain;
+                    var movingLoss = previousLoss * (length - 1) + loss;
                     var movingRs = movingGain / movingLoss;
                     indicators.Add(new Indicator(GetRsi(movingRs), currCandle.Date));
                 }

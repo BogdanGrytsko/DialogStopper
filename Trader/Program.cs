@@ -28,9 +28,14 @@ namespace Trader
             //how many maximums? 
 
             var rsi = new RSI().CalculateMany(data);
-            var storage = new GoogleSheetStorage<FormatIndicator>("1cJzzIJPyMIfoMkwTQVIsjG21zqgPg4bcaDcfFeEK8lY") {SheetName = "RSI"};
-            await storage.Delete(1, rsi.Count + 1);
-            await storage.Add(rsi.Select(FormatIndicator.Get5MinIndicator).ToList(), true);
+            var rsiStorage = new GoogleSheetStorage<FormatIndicator>("1cJzzIJPyMIfoMkwTQVIsjG21zqgPg4bcaDcfFeEK8lY") {SheetName = "RSI"};
+            await rsiStorage.Delete(1, rsi.Count + 1);
+            await rsiStorage.Add(rsi.Select(FormatIndicator.Get5MinIndicator).ToList(), true);
+            
+            var sma = new SMA(10).CalculateMany(data);
+            var smaStorage = new GoogleSheetStorage<FormatIndicator>("1cJzzIJPyMIfoMkwTQVIsjG21zqgPg4bcaDcfFeEK8lY") {SheetName = "SMA10"};
+            await smaStorage.Delete(1, sma.Count + 1);
+            await smaStorage.Add(sma.Select(FormatIndicator.Get5MinIndicator).ToList(), true);
             Console.WriteLine("Finished");
         }
 

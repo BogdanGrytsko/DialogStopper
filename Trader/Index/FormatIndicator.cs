@@ -12,7 +12,7 @@ namespace Trader.Index
             return new FormatIndicator
             {
                 Date = x.Date.ToString("HH:mm"),
-                Value = Math.Round(x.Value, 2)
+                Value = Math.Round(x.Value, 5)
             };
         }
     }
