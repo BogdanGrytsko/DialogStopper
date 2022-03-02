@@ -20,7 +20,11 @@ namespace DialogStopper.Storage
         {
             var lines = await File.ReadAllLinesAsync(logFile);
             var entries = lines.Select(Meditation.FromTxtFile).ToList();
-            await Add(entries, true);
+            //only new
+            var data = await Get();
+            var set = data.Select(x => x.TimeStamp).ToHashSet();
+            entries = entries.Where(x => !set.Contains(x.TimeStamp)).ToList();
+            await Add(entries, !data.Any());
         }
 
         public async Task UpdateStats()
