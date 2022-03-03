@@ -20,7 +20,8 @@ namespace PlayerMap.Model
         public int NewPlayerIid { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
+        public int DSPlayerId { get; set; }
+        
         public string GetKey()
         {
             var key = RemoveSpecialCharacters(Name);
