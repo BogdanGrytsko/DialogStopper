@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using Trader.Index;
 using Xunit;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestTask.PlayerMap
+namespace PlayerMap.Model
 {
     public class BoxScore
     {

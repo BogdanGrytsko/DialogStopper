@@ -2,7 +2,7 @@
 
 namespace Trader.MyFxBook
 {
-    public class MyFxBookCandleMap: ClassMap<Candle>
+    public class MyFxBookCandleMap : ClassMap<Candle>
     {
         public MyFxBookCandleMap()
         {

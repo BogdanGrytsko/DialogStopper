@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace TestTask.PlayerMap
+namespace PlayerMap.Model
 {
     public class Player
     {
@@ -14,6 +14,12 @@ namespace TestTask.PlayerMap
         public int Height { get; set; }
         public int Weight { get; set; }
         public string Team { get; set; }
+        
+        //actually MySQl
+        public int PlayerIid { get; set; }
+        public int NewPlayerIid { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         public string GetKey()
         {

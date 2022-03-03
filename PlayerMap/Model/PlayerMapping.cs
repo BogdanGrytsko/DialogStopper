@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TestTask.PlayerMap
+namespace PlayerMap.Model
 {
     public class PlayerMapping
     {

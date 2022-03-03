@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using TestTask.PlayerMap;
+using PlayerMap.Model;
 using Xunit;
 
 namespace PlayerMap
@@ -7,9 +6,15 @@ namespace PlayerMap
     public class MapTest
     {
         [Fact]
-        public void Test1()
+        public void PlayerMap()
         {
             PlayerMapping.Run();
+        }
+
+        [Fact]
+        public void NewPlayerMap()
+        {
+            NewPlayerIdMap.Map();
         }
     }
 }
