@@ -1,3 +1,4 @@
+using FluentAssertions;
 using PlayerMap.Model;
 using Xunit;
 
@@ -5,7 +6,7 @@ namespace PlayerMap
 {
     public class MapTest
     {
-        [Fact]
+        [Fact(Skip = "Not now")]
         public void PlayerMap()
         {
             PlayerMapping.Run();
@@ -14,7 +15,12 @@ namespace PlayerMap
         [Fact]
         public void NewPlayerMap()
         {
-            NewPlayerIdMap.Map();
+            var masterPlayers = NewPlayerIdMap.Map();
+            masterPlayers.Count.Should().Be(1784);
+            foreach (var masterPlayer in masterPlayers)
+            {
+                masterPlayer.PlayerIds.Count.Should().BeGreaterThan(1);
+            }
         }
     }
 }

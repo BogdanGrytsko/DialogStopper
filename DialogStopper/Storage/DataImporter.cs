@@ -11,8 +11,12 @@ namespace DialogStopper.Storage
     {
         public List<T> LoadData(string path)
         {
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                BadDataFound = null
+            };
             using var reader = new StreamReader(path);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            using var csv = new CsvReader(reader, config);
             csv.Context.RegisterClassMap<TMap>();
             var records = csv.GetRecords<T>();
             return records.ToList();

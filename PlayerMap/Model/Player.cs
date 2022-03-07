@@ -18,6 +18,8 @@ namespace PlayerMap.Model
         //actually MySQl
         public int PlayerIid { get; set; }
         public int NewPlayerIid { get; set; }
+        public Player NewPlayer { get; set; }
+        public Player ParentPlayer { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int DSPlayerId { get; set; }
@@ -40,7 +42,9 @@ namespace PlayerMap.Model
 
         public override string ToString()
         {
-            return $"{Name}";
+            if (!string.IsNullOrEmpty(Name))
+                return $"{Name}";
+            return $"{FirstName} {LastName}";
         }
             
         public static string RemoveSpecialCharacters(string str)
