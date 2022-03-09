@@ -9,13 +9,20 @@ namespace DialogStopper.Storage
 {
     public class DataImporter<T, TMap> where TMap : ClassMap<T>
     {
-        public List<T> LoadData(string path)
+        public List<T> LoadData(string path, string? delimiter = null)
+        {
+            using var reader = new StreamReader(path);
+            return LoadData(reader, delimiter);
+        }
+        
+        public List<T> LoadData(StreamReader reader, string? delimiter = null)
         {
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                BadDataFound = null
+                BadDataFound = null,
             };
-            using var reader = new StreamReader(path);
+            if (delimiter != null)
+                config.Delimiter = delimiter;
             using var csv = new CsvReader(reader, config);
             csv.Context.RegisterClassMap<TMap>();
             var records = csv.GetRecords<T>();

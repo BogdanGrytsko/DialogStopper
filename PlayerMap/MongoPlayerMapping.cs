@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using DialogStopper.Storage;
+using PlayerMap.Model;
 
-namespace PlayerMap.Model
+namespace PlayerMap
 {
-    public class PlayerMapping
+    public class MongoPlayerMapping
     {
         public static void Run()
         {
-            var players = GetPlayers();
-            var boxScores = GetBoxScoresMap();
+            var zip = ZipFile.Open(@"C:\temp\temp.zip", ZipArchiveMode.Read);
+            var players = GetPlayers(zip.Entries.Single(x => x.Name == "sport.players.csv"));
+            var boxScores = GetBoxScoresMap(zip.Entries.Single(x => x.Name == "allBoxScores.csv"));
 
             var groups = players.GroupBy(x => x.GetKey()).OrderBy(x => x.Key).ToList();
             var matchedGroups = groups.Where(x => x.Count() > 1).OrderBy(x => x.Key).ToList();
@@ -34,12 +39,14 @@ namespace PlayerMap.Model
             File.WriteAllText(@"C:\temp\master.players.csv", sb.ToString());
         }
 
-        private static List<Player> GetPlayers()
+        private static List<Player> GetPlayers(ZipArchiveEntry zipArchiveEntry)
         {
-            var playerCsv = File.ReadAllLines(@"C:\temp\sport.players.csv");
             var players = new List<Player>();
-            foreach (var s in playerCsv.Skip(1))
+            using var sw = new StreamReader(zipArchiveEntry.Open());
+            var headers = sw.ReadLine();
+            while (!sw.EndOfStream)
             {
+                var s = sw.ReadLine();
                 var split = s.Split(";");
                 var p = new Player
                 {
@@ -53,31 +60,26 @@ namespace PlayerMap.Model
                     Weight = int.Parse(split[20]),
                     Team = split[23]
                 };
+                p.Name = Clean(p.Name);
                 players.Add(p);
             }
 
             players = players.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToList();
             return players;
         }
-        
-        private static Dictionary<string, HashSet<BoxScore>> GetBoxScoresMap()
-        {
-            var boxScoresCsv = File.ReadAllLines(@"C:\temp\basketball.boxscores.players_mapinfo.csv");
-            var boxScores = new List<BoxScore>();
-            foreach (var s in boxScoresCsv.Skip(1))
-            {
-                var split = s.Split(";");
-                var score = new BoxScore
-                {
-                    LeagueId = split[1],
-                    LeagueName = split[2],
-                    SeasonId = split[3],
-                    SeasonName = split[4],
-                    PlayerId = split[5]
-                };
-                boxScores.Add(score);
-            }
 
+        private static string Clean(string name)
+        {
+            var rgx = new Regex("[^a-zA-Z0-9 -]");
+            name = rgx.Replace(name, "");
+            return name.Trim();
+        }
+
+        private static Dictionary<string, HashSet<BoxScore>> GetBoxScoresMap(ZipArchiveEntry zipArchiveEntry)
+        {
+            using var reader = new StreamReader(zipArchiveEntry.Open());
+            var boxScores = new DataImporter<BoxScore, BoxScoreMap>().LoadData(reader, ";");
+            
             var dic = new Dictionary<string, HashSet<BoxScore>>();
             foreach (var boxScore in boxScores)
             {

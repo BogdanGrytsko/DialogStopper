@@ -14,6 +14,12 @@ namespace PlayerMap.Model
         public int Height { get; set; }
         public int Weight { get; set; }
         public string Team { get; set; }
+        //actually mongo
+        public string Key { get; set; }
+        public string League { get; set; }
+        public string LeagueId { get; set; }
+        public string Season { get; set; }
+        public string SeasonId { get; set; }
         
         //actually MySQl
         public int PlayerIid { get; set; }
@@ -26,7 +32,7 @@ namespace PlayerMap.Model
         
         public string GetKey()
         {
-            var key = RemoveSpecialCharacters(Name);
+            var key = Name;
             if (BirthDate >= new DateTime(1950, 1, 1))
                 key += $"_{BirthDate}";
             if (!string.IsNullOrWhiteSpace(BirthPlace) &&

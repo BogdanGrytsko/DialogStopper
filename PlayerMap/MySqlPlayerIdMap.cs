@@ -6,11 +6,11 @@ using PlayerMap.Model;
 
 namespace PlayerMap
 {
-    public class NewPlayerIdMap
+    public class MySqlPlayerIdMap
     {
         public static List<MasterPlayer> Map()
         {
-            var players = new DataImporter<Player, MySqlPlayerMap>().LoadData(@"Data\\tblplayers.csv").ToList();
+            var players = new DataImporter<Player, MySqlPlayerMap>().LoadData(@"Data\tblplayers.csv").ToList();
             var playerMap = players.ToDictionary(x => x.PlayerIid);
             var result = new List<MasterPlayer>();
             foreach (var player in players)
