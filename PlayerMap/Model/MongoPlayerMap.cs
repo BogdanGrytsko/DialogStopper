@@ -6,22 +6,16 @@ namespace PlayerMap.Model
     {
         public MongoPlayerMap()
         {
-            Map(m => m.Key).Name("Key");
-            
-            Map(m => m.Id).Name("Id");
-            Map(m => m.Name).Name("Name");
-            Map(m => m.League).Name("League");
-            Map(m => m.LeagueId).Name("LeagueId");
-            Map(m => m.Season).Name("Season");
-            Map(m => m.SeasonId).Name("SeasonId");
-            
-            Map(m => m.BirthDate).Name("BirthDate");
-            Map(m => m.BirthPlace).Name("BirthPlace");
-            Map(m => m.College).Name("College");
-            Map(m => m.Debut).Name("Debut");
-            Map(m => m.Height).Name("Height");
-            Map(m => m.Weight).Name("Weight");
-            Map(m => m.Team).Name("Team");
+            Map(m => m.Id).Name("_id");
+            Map(m => m.Iid).Name("iid");
+            Map(m => m.Name).Name("name");
+            Map(m => m.BirthDate).Name("birthDate");
+            Map(m => m.BirthPlace).Name("birthPlace");
+            Map(m => m.College).Name("college");
+            Map(m => m.Debut).Name("debut");
+            Map(m => m.Height).Name("height");
+            Map(m => m.Weight).Name("weight");
+            Map(m => m.Team).Name("team");
         }
     }
 }

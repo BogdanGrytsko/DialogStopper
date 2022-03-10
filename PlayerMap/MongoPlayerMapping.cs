@@ -22,17 +22,17 @@ namespace PlayerMap
             var matchedGroups = groups.Where(x => x.Count() > 1).OrderBy(x => x.Key).ToList();
             var singleGroupPlayers = groups.Count - matchedGroups.Count;
             var sb = new StringBuilder();
-            sb.AppendLine($"Key;Id;Name;League;LeagueId;Season;SeasonId;BirthDate;BirthPlace;College;Debut;Height;Weight;Team");
+            sb.AppendLine($"Key;Id;Name;League;LeagueId;Season;SeasonId;BirthDate;BirthPlace;College;Debut;Height;Weight;Team;Iid");
             foreach (var group in groups)
             {
                 foreach (var p in group)
                 {
                     if (!boxScores.TryGetValue(p.Id, out var playerBs))
-                        playerBs = new HashSet<BoxScore> { new BoxScore() };
+                        playerBs = new HashSet<LeagueSeason> { new LeagueSeason() };
                     
                     foreach (var bs in playerBs)
                     {
-                        sb.AppendLine($"{group.Key};{p.Id};{p.Name};{bs.LeagueName};{bs.LeagueId};{bs.SeasonName};{bs.SeasonId};{p.BirthDate};{p.BirthPlace};{p.College};{p.Debut};{p.Height};{p.Weight};{p.Team}");    
+                        sb.AppendLine($"{group.Key};{p.Id};{p.Name};{bs.LeagueName};{bs.LeagueId};{bs.SeasonName};{bs.SeasonId};{p.BirthDate};{p.BirthPlace};{p.College};{p.Debut};{p.Height};{p.Weight};{p.Team};{p.Iid}");    
                     }
                 }
             }
@@ -41,29 +41,13 @@ namespace PlayerMap
 
         private static List<Player> GetPlayers(ZipArchiveEntry zipArchiveEntry)
         {
-            var players = new List<Player>();
-            using var sw = new StreamReader(zipArchiveEntry.Open());
-            var headers = sw.ReadLine();
-            while (!sw.EndOfStream)
+            using var reader = new StreamReader(zipArchiveEntry.Open());
+            var players = new DataImporter<Player, MongoPlayerMap>().LoadData(reader, ";");
+            foreach (var player in players)
             {
-                var s = sw.ReadLine();
-                var split = s.Split(";");
-                var p = new Player
-                {
-                    Id = split[0],
-                    Name = split[8],
-                    BirthDate = DateTime.Parse(split[10]),
-                    BirthPlace = split[11],
-                    College = split[12],
-                    Debut = DateTime.Parse(split[13]),
-                    Height = int.Parse(split[15]),
-                    Weight = int.Parse(split[20]),
-                    Team = split[23]
-                };
-                p.Name = Clean(p.Name);
-                players.Add(p);
+                player.Name = Clean(player.Name);
             }
-
+            
             players = players.Where(x => !string.IsNullOrWhiteSpace(x.Name)).ToList();
             return players;
         }
@@ -75,19 +59,45 @@ namespace PlayerMap
             return name.Trim();
         }
 
-        private static Dictionary<string, HashSet<BoxScore>> GetBoxScoresMap(ZipArchiveEntry zipArchiveEntry)
+        private static Dictionary<string, HashSet<LeagueSeason>> GetBoxScoresMap(ZipArchiveEntry zipArchiveEntry)
         {
             using var reader = new StreamReader(zipArchiveEntry.Open());
-            var boxScores = new DataImporter<BoxScore, BoxScoreMap>().LoadData(reader, ";");
+            var boxScores = new DataImporter<LeagueSeason, BoxScoreMap>().LoadData(reader, ";");
             
-            var dic = new Dictionary<string, HashSet<BoxScore>>();
+            var dic = new Dictionary<string, HashSet<LeagueSeason>>();
             foreach (var boxScore in boxScores)
             {
                 if (!dic.ContainsKey(boxScore.PlayerId))
-                    dic.Add(boxScore.PlayerId, new HashSet<BoxScore>());
+                    dic.Add(boxScore.PlayerId, new HashSet<LeagueSeason>());
                 dic[boxScore.PlayerId].Add(boxScore);
             }
             return dic;
+        }
+
+        public static List<MasterPlayer> GetMasterPlayers()
+        {
+            var mongoPlayers = new DataImporter<Player, MongoMasterPlayerMap>().LoadData(@"C:\temp\master.players.csv", ";").ToList();
+            var mongoMasterPlayers = new List<MasterPlayer>();
+            foreach (var group in mongoPlayers.GroupBy(x => x.GetKey()))
+            {
+                var mp = new MasterPlayer();
+                foreach (var player in group)
+                {
+                    if (!mp.PlayerIds.Contains(player.Id))
+                    {
+                        mp.Players.Add(player);
+                        mp.PlayerIds.Add(player.Id);    
+                    }
+                    if (!string.IsNullOrEmpty(player.Season))
+                        mp.LeagueSeasons.Add(player.GetLeagueSeason());
+                }
+                if (mp.PlayerIds.Count == 1)
+                    continue;
+                mp.LeagueSeasons = mp.LeagueSeasons.OrderBy(x => x.SeasonName).ThenBy(x => x.LeagueName).ToList();
+                mongoMasterPlayers.Add(mp);
+            }
+
+            return mongoMasterPlayers;
         }
     }
 }

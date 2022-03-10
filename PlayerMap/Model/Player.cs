@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace PlayerMap.Model
 {
@@ -20,9 +21,23 @@ namespace PlayerMap.Model
         public string LeagueId { get; set; }
         public string Season { get; set; }
         public string SeasonId { get; set; }
+
+        public LeagueSeason GetLeagueSeason()
+        {
+            var team = JsonConvert.DeserializeObject<Team>(Team);
+            return new LeagueSeason
+            {
+                LeagueId = LeagueId,
+                LeagueName = League,
+                SeasonId = SeasonId,
+                SeasonName = Season,
+                PlayerId = Id,
+                TeamName = team?.Name
+            };
+        }
         
         //actually MySQl
-        public int PlayerIid { get; set; }
+        public int Iid { get; set; }
         public int NewPlayerIid { get; set; }
         public Player NewPlayer { get; set; }
         public Player ParentPlayer { get; set; }
@@ -35,14 +50,14 @@ namespace PlayerMap.Model
             var key = Name;
             if (BirthDate >= new DateTime(1950, 1, 1))
                 key += $"_{BirthDate}";
-            if (!string.IsNullOrWhiteSpace(BirthPlace) &&
-                !BirthPlace.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
-                key += $"_{BirthPlace}";
+            // if (!string.IsNullOrWhiteSpace(BirthPlace) &&
+            //     !BirthPlace.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
+            //     key += $"_{BirthPlace}";
             if (!string.IsNullOrWhiteSpace(College) &&
                 !College.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
                 key += $"_{College}";
-            if (Debut >= new DateTime(1950, 1, 1))
-                key += $"_{Debut}";
+            // if (Debut >= new DateTime(1950, 1, 1))
+            //     key += $"_{Debut}";
             return key;
         }
 

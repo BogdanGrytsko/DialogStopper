@@ -1,7 +1,5 @@
 using System.Linq;
-using DialogStopper.Storage;
 using FluentAssertions;
-using PlayerMap.Model;
 using Xunit;
 
 namespace PlayerMap
@@ -17,16 +15,17 @@ namespace PlayerMap
         [Fact]
         public void MySqlPlayerMap()
         {
-            var masterPlayers = MySqlPlayerIdMap.Map();
-            masterPlayers.Count.Should().Be(1784);
-            foreach (var masterPlayer in masterPlayers)
+            var mySqlMasterPlayers = MySqlPlayerIdMap.Map();
+            mySqlMasterPlayers.Count.Should().Be(1784);
+            foreach (var masterPlayer in mySqlMasterPlayers)
             {
-                masterPlayer.PlayerIds.Count.Should().BeGreaterThan(1);
+                masterPlayer.PlayerIids.Count.Should().BeGreaterThan(1);
             }
-            var mongoPlayers = new DataImporter<Player, MongoPlayerMap>().LoadData(@"C:\temp\master.players.csv", ";").ToList();
-            //so we would like to compare this results to default mapping, maybe do some improvements
-            mongoPlayers.Count.Should().BeGreaterThan(500000);
-            var nbaPlayers = mongoPlayers.Where(x => x.LeagueId == "54457dce300969b132fcfb34").ToList();
+
+            var mongoMasterPlayers = MongoPlayerMapping.GetMasterPlayers();
+            var nbaPlayers = mongoMasterPlayers.Where(x => x.Players.Any(y => y.LeagueId == "54457dce300969b132fcfb34")).ToList();
+
+            var strangePlayers15 = nbaPlayers.Where(x => x.Players.Count > 15).ToList();
         }
     }
 }
