@@ -25,6 +25,10 @@ namespace PlayerMap.Model
         public LeagueSeason GetLeagueSeason()
         {
             var team = JsonConvert.DeserializeObject<Team>(Team);
+            var teamId = string.IsNullOrEmpty(Team)
+                ? null
+                : Team.Split(",")[0].Split(new string[] { "oid", "}", ":", "\"", " ", "{", "$" },
+                    StringSplitOptions.RemoveEmptyEntries);
             return new LeagueSeason
             {
                 LeagueId = LeagueId,
@@ -32,6 +36,8 @@ namespace PlayerMap.Model
                 SeasonId = SeasonId,
                 SeasonName = Season,
                 PlayerId = Id,
+                PlayerName = GetName(),
+                TeamId = teamId?[1],
                 TeamName = team?.Name
             };
         }
@@ -44,6 +50,13 @@ namespace PlayerMap.Model
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int DSPlayerId { get; set; }
+
+        public string GetName()
+        {
+            if (Id != null)
+                return Name;
+            return $"{FirstName} {LastName}";
+        }
         
         public string GetKey()
         {

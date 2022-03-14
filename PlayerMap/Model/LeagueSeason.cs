@@ -5,12 +5,14 @@ namespace PlayerMap.Model
     public class LeagueSeason
     {
         public string PlayerId { get; set; }
+        public string PlayerName { get; set; }
         
         public string LeagueId { get; set; }
         public string LeagueName { get; set; }
         
         public string SeasonId { get; set; }
         public string SeasonName { get; set; }
+        public string TeamId { get; set; }
         public string TeamName { get; set; }
 
         protected bool Equals(LeagueSeason other)

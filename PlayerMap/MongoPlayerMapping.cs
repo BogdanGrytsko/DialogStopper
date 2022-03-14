@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using CsvHelper;
 using DialogStopper.Storage;
+using Newtonsoft.Json;
 using PlayerMap.Model;
 
 namespace PlayerMap
@@ -98,6 +101,15 @@ namespace PlayerMap
             }
 
             return mongoMasterPlayers;
+        }
+
+        public static void Save(List<MasterPlayer> players)
+        {
+            var json = JsonConvert.SerializeObject(players);
+            File.WriteAllText(@"C:\temp\master.players.result.json", json);
+            // using var writer = new StreamWriter(@"C:\temp\master.players.result.csv");
+            // using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            // csv.WriteRecords(players);
         }
     }
 }

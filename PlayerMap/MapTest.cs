@@ -23,9 +23,11 @@ namespace PlayerMap
             }
 
             var mongoMasterPlayers = MongoPlayerMapping.GetMasterPlayers();
-            var nbaPlayers = mongoMasterPlayers.Where(x => x.Players.Any(y => y.LeagueId == "54457dce300969b132fcfb34")).ToList();
-
-            var strangePlayers15 = nbaPlayers.Where(x => x.Players.Count > 15).ToList();
+            var nbaPlayers = mongoMasterPlayers
+                .Where(x => x.Players.Any(y => y.LeagueId == "54457dce300969b132fcfb34"))
+                .ToList();
+            
+            MongoPlayerMapping.Save(mongoMasterPlayers);
         }
     }
 }

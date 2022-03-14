@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using DialogStopper.Storage;
 
@@ -19,19 +20,23 @@ namespace DialogStopper
             // await new MeditationGoogleSheetStorage().Delete(189);
             var points = new List<long>();
             var sw = new Stopwatch();
-            Console.WriteLine("Program Started. Press C to start logging");
+            var started = false;
+            Console.WriteLine("Program Started. Press Space to start logging");
             while (true)
             {
                 var c = Console.ReadKey();
-                if (c.Key == ConsoleKey.C)
-                {
-                    sw.Start();
-                    Console.WriteLine("Started");
-                }
-
                 if (c.Key == ConsoleKey.Spacebar)
                 {
-                    points.Add(sw.ElapsedMilliseconds / 1000);
+                    if (!started)
+                    {
+                        sw.Start();
+                        Console.WriteLine("Started");
+                        started = true;
+                    }
+                    else
+                    {
+                        points.Add(sw.ElapsedMilliseconds / 1000);    
+                    }
                 }
 
                 if (c.Key == ConsoleKey.Enter)

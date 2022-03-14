@@ -1,4 +1,6 @@
-﻿namespace PlayerMap.Model
+﻿using Newtonsoft.Json;
+
+namespace PlayerMap.Model
 {
     public class Team
     {

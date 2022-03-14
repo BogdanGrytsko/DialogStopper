@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace PlayerMap.Model
 {
@@ -7,8 +8,11 @@ namespace PlayerMap.Model
     {
         public HashSet<string> PlayerIds { get; set; }
         public HashSet<int> PlayerIids { get; set; }
+        [JsonIgnore]
         public List<Player> Players { get; set; }
         public List<LeagueSeason> LeagueSeasons { get; set; }
+        
+        public double Correctness { get; set; }
 
         public MasterPlayer()
         {
@@ -20,9 +24,7 @@ namespace PlayerMap.Model
 
         public override string ToString()
         {
-            if (PlayerIds.Any())
-                return $"{Players.First().Name} {PlayerIds.Count}";
-            return $"{PlayerIids.Count}";
+            return $"{Players.First().GetName()} {PlayerIids.Count}";
         }
     }
 }
