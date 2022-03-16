@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace PlayerMap.Model
+﻿namespace PlayerMap.Model
 {
     public class Team
     {

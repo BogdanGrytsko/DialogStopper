@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using CsvHelper;
 using DialogStopper.Storage;
 using Newtonsoft.Json;
 using PlayerMap.Model;
@@ -89,7 +86,8 @@ namespace PlayerMap
                     if (!mp.PlayerIds.Contains(player.Id))
                     {
                         mp.Players.Add(player);
-                        mp.PlayerIds.Add(player.Id);    
+                        mp.PlayerIds.Add(player.Id);
+                        mp.PlayerIids.Add(player.Iid);
                     }
                     if (!string.IsNullOrEmpty(player.Season))
                         mp.LeagueSeasons.Add(player.GetLeagueSeason());
