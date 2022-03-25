@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace PlayerMap.Model
 {
     public class MasterPlayer
     {
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public HashSet<string> PlayerIds { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public HashSet<int> PlayerIids { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public List<Player> Players { get; set; }
+        [JsonProperty("PlayerInfos")]
         public List<LeagueSeason> LeagueSeasons { get; set; }
         public string Name => Players.First().GetName();
         public int Count => Players.Count;
