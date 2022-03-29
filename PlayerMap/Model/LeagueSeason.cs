@@ -4,6 +4,8 @@ namespace PlayerMap.Model
 {
     public class LeagueSeason
     {
+        public int IDSPlayerId { get; set; }
+        
         public string PlayerId { get; set; }
         public string PlayerName { get; set; }
         

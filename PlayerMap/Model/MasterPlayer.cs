@@ -17,10 +17,10 @@ namespace PlayerMap.Model
         public List<LeagueSeason> LeagueSeasons { get; set; }
         public string Name => Players.First().GetName();
         public int Count => Players.Count;
-        public int DSPlayerId { get; set; }
+        
         
         public double Correctness { get; set; }
-        public string Status { get; set; }
+        public string Comment { get; set; }
 
         public MasterPlayer()
         {
@@ -32,7 +32,7 @@ namespace PlayerMap.Model
 
         public override string ToString()
         {
-            return $"{Name} {Count} {Status} {Correctness}";
+            return $"{Name} {Count} {Comment} {Correctness}";
         }
 
         public void AnalyzeCorrectness()
@@ -47,7 +47,7 @@ namespace PlayerMap.Model
             if (!LeagueSeasons.Any()) return;
             var x = (double)LeagueSeasons.Select(x => x.SeasonName).Distinct().Count() / LeagueSeasons.Count;
             if (x < 0.6)
-                Status += "Often playing in 2 leagues";
+                Comment += "Often playing in 2 leagues";
         }
 
         private void HandleCorrectness()
@@ -58,7 +58,7 @@ namespace PlayerMap.Model
             cnt = Math.Max(cnt, lowLimit);
             Correctness = 100 - (cnt - lowLimit) * 100 / (highLimit - lowLimit);
             if (Correctness < 100)
-                Status = "Lot's of players";
+                Comment = "Lot's of players";
         }
 
         private void HandleCollege()
@@ -70,7 +70,7 @@ namespace PlayerMap.Model
                     nonCollegeFound = true;
                 else if (nonCollegeFound)
                 {
-                    Status = "College after normal league";
+                    Comment = "College after normal league";
                     Correctness = 0;
                 }
             }
