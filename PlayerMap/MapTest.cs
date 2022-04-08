@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using PlayerMap.Model;
 using Xunit;
@@ -30,7 +31,6 @@ namespace PlayerMap
                 .ToList();
 
             var mySqlDic = GetDictionary(mySqlMasterPlayers);
-
             mongoMasterPlayers.ForEach(x => x.AnalyzeCorrectness());
             foreach (var masterPlayer in mongoMasterPlayers)
             {
