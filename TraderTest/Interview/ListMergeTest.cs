@@ -15,10 +15,23 @@ namespace TraderTest.Interview
         [Fact]
         public void ListTest()
         {
-            var list1 = new List<Person> { new() { Id = 1, Name = "Bogdan" }, new() { Id = 2, Name = "Roman" } };
-            var list2 = new List<Person> { new() { Id = 2, Age = 20 }, new() { Id = 3, Age = 30} };
+            var list1 = new List<Person>
+            {
+                new() { Id = 1, Name = "Bogdan" },
+                new() { Id = 2, Name = "Roman" }
+            };
+            var list2 = new List<Person>
+            {
+                new() { Id = 2, Age = 20 },
+                new() { Id = 3, Age = 30}
+            };
             //Code goes here
-            var list3 = new List<Person> { new() { Id = 1, Name = "Bogdan" }, new() { Id = 2, Name = "Roman", Age = 20}, new() { Id = 3, Age = 30} };
+            var expectedList = new List<Person>
+            {
+                new() { Id = 1, Name = "Bogdan" },
+                new() { Id = 2, Name = "Roman", Age = 20},
+                new() { Id = 3, Age = 30}
+            };
         }
 
         [Fact]
