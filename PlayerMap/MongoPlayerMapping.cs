@@ -28,7 +28,7 @@ namespace PlayerMap
                 foreach (var p in group)
                 {
                     if (!boxScores.TryGetValue(p.Id, out var playerBs))
-                        playerBs = new HashSet<LeagueSeason> { new LeagueSeason() };
+                        playerBs = new HashSet<BoxScore> { new() };
                     
                     foreach (var bs in playerBs)
                     {
@@ -59,16 +59,16 @@ namespace PlayerMap
             return name.Trim();
         }
 
-        private static Dictionary<string, HashSet<LeagueSeason>> GetBoxScoresMap(ZipArchiveEntry zipArchiveEntry)
+        private static Dictionary<string, HashSet<BoxScore>> GetBoxScoresMap(ZipArchiveEntry zipArchiveEntry)
         {
             using var reader = new StreamReader(zipArchiveEntry.Open());
-            var boxScores = new DataImporter<LeagueSeason, BoxScoreMap>().LoadData(reader, ";");
+            var boxScores = new DataImporter<BoxScore, BoxScoreMap>().LoadData(reader, ";");
             
-            var dic = new Dictionary<string, HashSet<LeagueSeason>>();
+            var dic = new Dictionary<string, HashSet<BoxScore>>();
             foreach (var boxScore in boxScores)
             {
                 if (!dic.ContainsKey(boxScore.PlayerId))
-                    dic.Add(boxScore.PlayerId, new HashSet<LeagueSeason>());
+                    dic.Add(boxScore.PlayerId, new HashSet<BoxScore>());
                 dic[boxScore.PlayerId].Add(boxScore);
             }
             return dic;
@@ -94,7 +94,7 @@ namespace PlayerMap
                 }
                 if (mp.PlayerIds.Count == 1)
                     continue;
-                mp.LeagueSeasons = mp.LeagueSeasons.OrderBy(x => x.SeasonName).ThenBy(x => x.LeagueName).ToList();
+                mp.LeagueSeasons = mp.LeagueSeasons.OrderBy(x => x.Season.Name).ThenBy(x => x.League.Name).ToList();
                 mongoMasterPlayers.Add(mp);
             }
 

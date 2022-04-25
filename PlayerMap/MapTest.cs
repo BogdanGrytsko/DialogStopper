@@ -38,6 +38,7 @@ namespace PlayerMap
                 foreach (var mySqlPlayer in mySqlPlayers.ToList())
                 {
                     if (mySqlPlayer.Count != masterPlayer.Count) continue;
+                    masterPlayer.IDSPlayerId = mySqlPlayer.GetDSPlayerId();
                     foreach (var leagueSeason in masterPlayer.LeagueSeasons)
                     {
                         leagueSeason.IDSPlayerId = mySqlPlayer.GetDSPlayerId();

@@ -6,38 +6,14 @@ namespace PlayerMap.Model
     {
         public int IDSPlayerId { get; set; }
         
-        public string PlayerId { get; set; }
-        public string PlayerName { get; set; }
-        
-        public string LeagueId { get; set; }
-        public string LeagueName { get; set; }
-        
-        public string SeasonId { get; set; }
-        public string SeasonName { get; set; }
-        public string TeamId { get; set; }
-        public string TeamName { get; set; }
-
-        protected bool Equals(LeagueSeason other)
-        {
-            return PlayerId == other.PlayerId && LeagueId == other.LeagueId && SeasonId == other.SeasonId;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LeagueSeason)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(PlayerId, LeagueId, SeasonId);
-        }
+        public MonikerRef Player { get; set; }
+        public MonikerRef League { get; set; }
+        public MonikerRef Season { get; set; }
+        public MonikerRef Team { get; set; }
 
         public override string ToString()
         {
-            return $"{SeasonName} {LeagueName} {TeamName} {PlayerId}";
+            return $"{Season.Name} {League.Name} {Team.Name} {Player.id}";
         }
     }
 }

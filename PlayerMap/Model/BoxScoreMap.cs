@@ -2,7 +2,7 @@
 
 namespace PlayerMap.Model
 {
-    public class BoxScoreMap : ClassMap<LeagueSeason>
+    public class BoxScoreMap : ClassMap<BoxScore>
     {
         public BoxScoreMap()
         {

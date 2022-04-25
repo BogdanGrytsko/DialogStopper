@@ -31,14 +31,10 @@ namespace PlayerMap.Model
                     StringSplitOptions.RemoveEmptyEntries);
             return new LeagueSeason
             {
-                LeagueId = LeagueId,
-                LeagueName = League,
-                SeasonId = SeasonId,
-                SeasonName = Season,
-                PlayerId = Id,
-                PlayerName = GetName(),
-                TeamId = teamId?[1],
-                TeamName = team?.Name
+                League = new MonikerRef(LeagueId, League),
+                Season = new MonikerRef(SeasonId, Season),
+                Player = new MonikerRef(Id, GetName()),
+                Team = new MonikerRef(teamId?[1], team?.Name)
             };
         }
         

@@ -17,7 +17,7 @@ namespace PlayerMap.Model
         public List<LeagueSeason> LeagueSeasons { get; set; }
         public string Name => Players.First().GetName();
         public int Count => Players.Count;
-        
+        public int IDSPlayerId { get; set; }
         
         public double Correctness { get; set; }
         public string Comment { get; set; }
@@ -45,7 +45,7 @@ namespace PlayerMap.Model
         private void HandleSeasons()
         {
             if (!LeagueSeasons.Any()) return;
-            var x = (double)LeagueSeasons.Select(x => x.SeasonName).Distinct().Count() / LeagueSeasons.Count;
+            var x = (double)LeagueSeasons.Select(x => x.Season.Name).Distinct().Count() / LeagueSeasons.Count;
             if (x < 0.6)
                 Comment += "Often playing in 2 leagues";
         }
@@ -66,7 +66,7 @@ namespace PlayerMap.Model
             var nonCollegeFound = false;
             foreach (var leagueSeason in LeagueSeasons)
             {
-                if (!leagueSeason.LeagueName.Contains("College"))
+                if (!leagueSeason.League.Name.Contains("College"))
                     nonCollegeFound = true;
                 else if (nonCollegeFound)
                 {
