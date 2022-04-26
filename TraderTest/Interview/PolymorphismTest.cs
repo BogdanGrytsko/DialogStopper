@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace TraderTest.Interview
@@ -24,6 +25,14 @@ namespace TraderTest.Interview
             var a = (Animal)d;
             a.A();
             a.B();
+        }
+        
+        private static void A(List<string> a)
+        {
+        }
+        
+        private static void B(ref List<string> a)
+        {
         }
     }
 }
