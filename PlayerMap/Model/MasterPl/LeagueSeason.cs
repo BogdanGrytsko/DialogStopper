@@ -6,9 +6,9 @@ namespace PlayerMap.Model
     {
         public int IDSPlayerId { get; set; }
         
-        public MonikerRef Player { get; set; }
+        public BasicMonikerRef Player { get; set; }
         public MonikerRef League { get; set; }
-        public MonikerRef Season { get; set; }
+        public BasicMonikerRef Season { get; set; }
         public MonikerRef Team { get; set; }
 
         public override string ToString()

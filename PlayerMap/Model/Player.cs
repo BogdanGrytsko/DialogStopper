@@ -32,8 +32,8 @@ namespace PlayerMap.Model
             return new LeagueSeason
             {
                 League = new MonikerRef(LeagueId, League),
-                Season = new MonikerRef(SeasonId, Season),
-                Player = new MonikerRef(Id, GetName()),
+                Season = new BasicMonikerRef(SeasonId, Season),
+                Player = new BasicMonikerRef(Id, GetName()),
                 Team = new MonikerRef(teamId?[1], team?.Name)
             };
         }

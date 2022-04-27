@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DialogStopper.Storage;
 using FluentAssertions;
+using Newtonsoft.Json;
 using PlayerMap.Model;
 using Xunit;
 
@@ -48,6 +51,33 @@ namespace PlayerMap
             }
 
             MongoPlayerMapping.Save(mongoMasterPlayers);
+        }
+
+        [Fact]
+        public void ToCsv()
+        {
+            var path = @"C:\temp\master.players.result.json";
+            var data = File.ReadAllText(path);
+            var masterPlayers = JsonConvert.DeserializeObject<List<MasterPlayerResult>>(data);
+            var flattened = new List<MasterPlayerFlat>();
+            foreach (var m in masterPlayers)
+            {
+                foreach (var p in m.PlayerInfos)
+                {
+                    flattened.Add(new MasterPlayerFlat
+                    {
+                        Comment = m.Comment,
+                        Correctness = m.Correctness,
+                        Name = m.Name,
+                        IDSPlayerId = m.IDSPlayerId,
+                        League = p.League,
+                        Player = p.Player,
+                        Season = p.Season,
+                        Team = p.Team
+                    });
+                }
+            }
+            DataExporter.Export(flattened, path.Replace("json", "csv"));
         }
 
         private Dictionary<string, List<MasterPlayer>> GetDictionary(List<MasterPlayer> players)
