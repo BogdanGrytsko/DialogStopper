@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PlayerMap.Model
+﻿namespace PlayerMap.Model.MasterPl
 {
     public class LeagueSeason
     {

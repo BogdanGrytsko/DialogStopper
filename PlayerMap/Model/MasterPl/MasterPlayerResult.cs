@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PlayerMap.Model
+namespace PlayerMap.Model.MasterPl
 {
     public class MasterPlayerResult
     {

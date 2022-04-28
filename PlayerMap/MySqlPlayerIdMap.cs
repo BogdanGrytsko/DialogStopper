@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DialogStopper.Storage;
 using PlayerMap.Model;
+using PlayerMap.Model.MasterPl;
 
 namespace PlayerMap
 {

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using DialogStopper.Storage;
 using FluentAssertions;
 using Newtonsoft.Json;
 using PlayerMap.Model;
+using PlayerMap.Model.MasterPl;
 using Xunit;
 
 namespace PlayerMap
@@ -29,9 +29,6 @@ namespace PlayerMap
             }
 
             var mongoMasterPlayers = MongoPlayerMapping.GetMasterPlayers();
-            var nbaPlayers = mongoMasterPlayers
-                .Where(x => x.Players.Any(y => y.LeagueId == "54457dce300969b132fcfb34"))
-                .ToList();
 
             var mySqlDic = GetDictionary(mySqlMasterPlayers);
             mongoMasterPlayers.ForEach(x => x.AnalyzeCorrectness());

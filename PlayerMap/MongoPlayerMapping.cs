@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using DialogStopper.Storage;
 using Newtonsoft.Json;
 using PlayerMap.Model;
+using PlayerMap.Model.MasterPl;
 
 namespace PlayerMap
 {
