@@ -39,7 +39,7 @@ namespace PlayerMap.Model.MasterPl
         {
             HandleCorrectness();
             HandleSeasons();
-            HandleCollege();
+            HandleLeagueSequence();
         }
 
         private void HandleSeasons()
@@ -61,20 +61,23 @@ namespace PlayerMap.Model.MasterPl
                 Comment = "Lot's of players";
         }
 
-        private void HandleCollege()
+        private void HandleLeagueSequence()
         {
-            var nonCollegeFound = false;
-            foreach (var leagueSeason in LeagueSeasons)
+            int maxLeague = -1;
+            foreach (var leagueSeason in LeagueSeasons.Where(x => !Leagues.InternalLeagues.ContainsKey(x.League.id)))
             {
-                if (!leagueSeason.League.Name.Contains("College"))
-                    nonCollegeFound = true;
-                else if (nonCollegeFound)
+                var newMaxLeague = Leagues.GetLeagueValue(leagueSeason.League.id);
+                if (newMaxLeague < maxLeague)
                 {
-                    Comment = "College after normal league";
+                    Comment = Leagues.GetComment(maxLeague, newMaxLeague);
                     Correctness = 0;
+                    break;
                 }
+                maxLeague = newMaxLeague;
             }
         }
+
+
 
         public int GetDSPlayerId()
         {

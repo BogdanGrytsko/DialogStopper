@@ -4,7 +4,6 @@ using System.Linq;
 using DialogStopper.Storage;
 using FluentAssertions;
 using Newtonsoft.Json;
-using PlayerMap.Model;
 using PlayerMap.Model.MasterPl;
 using Xunit;
 
@@ -19,10 +18,9 @@ namespace PlayerMap
         }
 
         [Fact]
-        public void MySqlPlayerMap()
+        public void CombinedPlayerMap()
         {
             var mySqlMasterPlayers = MySqlPlayerIdMap.Map();
-            // mySqlMasterPlayers.Count.Should().Be(1784);
             foreach (var masterPlayer in mySqlMasterPlayers)
             {
                 masterPlayer.PlayerIids.Count.Should().BeGreaterThan(1);
