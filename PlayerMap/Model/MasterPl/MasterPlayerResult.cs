@@ -8,7 +8,14 @@ namespace PlayerMap.Model.MasterPl
         public int IDSPlayerId { get; set; }
         public double Correctness { get; set; }
         public string Comment { get; set; }
+        
+        public string JazzId { get; set; }
 
         public List<LeagueSeason> PlayerInfos { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using DialogStopper.Storage;
 using FluentAssertions;
 using Newtonsoft.Json;
+using PlayerMap.Jazz;
 using PlayerMap.Model.MasterPl;
 using Xunit;
 
@@ -54,6 +55,8 @@ namespace PlayerMap
             var path = @"C:\temp\master.players.result.json";
             var data = File.ReadAllText(path);
             var masterPlayers = JsonConvert.DeserializeObject<List<MasterPlayerResult>>(data);
+            JazzMapping.Enhance(masterPlayers);
+             
             var flattened = new List<MasterPlayerFlat>();
             foreach (var m in masterPlayers)
             {
@@ -65,6 +68,7 @@ namespace PlayerMap
                         Correctness = m.Correctness,
                         Name = m.Name,
                         IDSPlayerId = m.IDSPlayerId,
+                        JazzId = m.JazzId,
                         League = p.League,
                         Player = p.Player,
                         Season = p.Season,
@@ -74,6 +78,8 @@ namespace PlayerMap
             }
             DataExporter.Export(flattened, path.Replace("json", "csv"));
         }
+
+
 
         private Dictionary<string, List<MasterPlayer>> GetDictionary(List<MasterPlayer> players)
         {
