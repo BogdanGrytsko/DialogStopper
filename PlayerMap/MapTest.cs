@@ -67,6 +67,7 @@ namespace PlayerMap
                         Comment = m.Comment,
                         Correctness = m.Correctness,
                         Name = m.Name,
+                        Key = m.Key,
                         IDSPlayerId = m.IDSPlayerId,
                         JazzId = m.JazzId,
                         League = p.League,

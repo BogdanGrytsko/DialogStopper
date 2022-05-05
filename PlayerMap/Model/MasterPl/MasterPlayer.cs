@@ -16,6 +16,7 @@ namespace PlayerMap.Model.MasterPl
         [JsonProperty("PlayerInfos")]
         public List<LeagueSeason> LeagueSeasons { get; set; }
         public string Name => Players.First().GetName();
+        public string Key { get; set; }
         public int Count => Players.Count;
         public int IDSPlayerId { get; set; }
         

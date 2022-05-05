@@ -81,7 +81,10 @@ namespace PlayerMap
             var mongoMasterPlayers = new List<MasterPlayer>();
             foreach (var group in mongoPlayers.GroupBy(x => x.GetKey()))
             {
-                var mp = new MasterPlayer();
+                var mp = new MasterPlayer
+                {
+                    Key = group.Key
+                };
                 foreach (var player in group)
                 {
                     if (!mp.PlayerIds.Contains(player.Id))
@@ -106,9 +109,6 @@ namespace PlayerMap
         {
             var json = JsonConvert.SerializeObject(players);
             File.WriteAllText(@"C:\temp\master.players.result.json", json);
-            // using var writer = new StreamWriter(@"C:\temp\master.players.result.csv");
-            // using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            // csv.WriteRecords(players);
         }
     }
 }
