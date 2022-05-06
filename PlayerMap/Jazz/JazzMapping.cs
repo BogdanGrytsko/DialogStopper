@@ -40,7 +40,12 @@ namespace PlayerMap.Jazz
                         {
                             if (mp != masterPlayer)
                             {
-                                masterPlayer.Comment = string.Join(". ", masterPlayer.Comment, "Jazz mapped to a different player");
+                                var comment = "Jazz mapped to a different player also";
+                                if (!string.IsNullOrEmpty(masterPlayer.Comment))
+                                    masterPlayer.Comment += $". {comment}";
+                                else
+                                    masterPlayer.Comment = comment;
+                                break;
                             }                                
                         }
                     }
