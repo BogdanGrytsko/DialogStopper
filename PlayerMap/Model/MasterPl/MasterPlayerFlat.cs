@@ -1,4 +1,6 @@
-﻿namespace PlayerMap.Model.MasterPl
+﻿using PlayerMap.Model.Scrape;
+
+namespace PlayerMap.Model.MasterPl
 {
     public class MasterPlayerFlat
     {
@@ -8,6 +10,8 @@
         public double Correctness { get; set; }
         public string Comment { get; set; }
         public string JazzId { get; set; }
+        
+        public NbaPlayer NbaPlayer { get; set; }
         
         public BasicMonikerRef Player { get; set; }
         public MonikerRef League { get; set; }

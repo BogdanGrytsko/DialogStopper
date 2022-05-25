@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PlayerMap.Model.Scrape;
 
 namespace PlayerMap.Model.MasterPl
 {
@@ -12,6 +13,7 @@ namespace PlayerMap.Model.MasterPl
         public string JazzId { get; set; }
         
         public List<LeagueSeason> PlayerInfos { get; set; }
+        public NbaPlayer NbaPlayer { get; set; }
 
         public override string ToString()
         {

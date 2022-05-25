@@ -51,12 +51,13 @@ namespace PlayerMap
         }
 
         [Fact]
-        public void ToCsv()
+        public void JazzNBAToCsv()
         {
             var path = @"C:\temp\master.players.result.json";
             var data = File.ReadAllText(path);
             var masterPlayers = JsonConvert.DeserializeObject<List<MasterPlayerResult>>(data);
             JazzMapping.Enhance(masterPlayers);
+            NBAMapping.Enhance(masterPlayers);
              
             var flattened = new List<MasterPlayerFlat>();
             foreach (var m in masterPlayers)
@@ -71,6 +72,7 @@ namespace PlayerMap
                         Key = m.Key,
                         IDSPlayerId = m.IDSPlayerId,
                         JazzId = m.JazzId,
+                        NbaPlayer = m.NbaPlayer,
                         League = p.League,
                         Player = p.Player,
                         Season = p.Season,
@@ -79,13 +81,6 @@ namespace PlayerMap
                 }
             }
             DataExporter.Export(flattened, path.Replace("json", "csv"));
-        }
-
-        [Fact]
-        public void EnhanceNBA()
-        {
-            var path = @"C:\temp\NbaPlayersTeams.csv";
-            var players = new DataImporter<NbaPlayer, NBAPlayerMap>().LoadData(path, ",");
         }
 
         private Dictionary<string, List<MasterPlayer>> GetDictionary(List<MasterPlayer> players)

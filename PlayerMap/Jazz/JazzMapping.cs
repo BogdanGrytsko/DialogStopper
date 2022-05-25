@@ -55,7 +55,6 @@ namespace PlayerMap.Jazz
                     }
                 }
             }
-            //1. Jazz has what we don't
         }
     }
 }
