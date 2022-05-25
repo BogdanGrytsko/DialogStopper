@@ -6,6 +6,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using PlayerMap.Jazz;
 using PlayerMap.Model.MasterPl;
+using PlayerMap.Model.Scrape;
 using Xunit;
 
 namespace PlayerMap
@@ -80,7 +81,12 @@ namespace PlayerMap
             DataExporter.Export(flattened, path.Replace("json", "csv"));
         }
 
-
+        [Fact]
+        public void EnhanceNBA()
+        {
+            var path = @"C:\temp\NbaPlayersTeams.csv";
+            var players = new DataImporter<NbaPlayer, NBAPlayerMap>().LoadData(path, ",");
+        }
 
         private Dictionary<string, List<MasterPlayer>> GetDictionary(List<MasterPlayer> players)
         {
