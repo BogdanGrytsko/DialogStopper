@@ -15,7 +15,8 @@ namespace PlayerMap.Model.MasterPl
         public List<Player> Players { get; set; }
         [JsonProperty("PlayerInfos")]
         public List<LeagueSeason> LeagueSeasons { get; set; }
-        public string Name => Players.First().GetName();
+        public string Name { get; set; }
+
         public string Key { get; set; }
         public int Count => Players.Count;
         public int IDSPlayerId { get; set; }
@@ -36,6 +37,11 @@ namespace PlayerMap.Model.MasterPl
         public override string ToString()
         {
             return $"{Name} {Count} {Comment} {Correctness}";
+        }
+
+        public void SetName()
+        {
+            Name = Players.First().GetName();
         }
 
         public void AnalyzeCorrectness()
@@ -79,9 +85,10 @@ namespace PlayerMap.Model.MasterPl
         private void HandleSeasons()
         {
             if (!LeagueSeasons.Any()) return;
-            var x = (double)LeagueSeasons.Select(x => x.Season.Name).Distinct().Count() / LeagueSeasons.Count;
-            if (x < 0.6)
-                Comments.Add("Often playing in 2 leagues");
+            var differentSeasons = LeagueSeasons.Select(x => x.Season.Name).Distinct().Count();
+            var x = (double)differentSeasons / LeagueSeasons.Count;
+            if (x < 0.5)
+                Comments.Add("Often playing in 2 leagues during same season");
         }
 
         private void HandleCorrectness()
@@ -92,7 +99,7 @@ namespace PlayerMap.Model.MasterPl
             cnt = Math.Max(cnt, lowLimit);
             Correctness = 100 - (cnt - lowLimit) * 100 / (highLimit - lowLimit);
             if (Correctness < 100)
-                Comments.Add("Lot's of players");
+                Comments.Add($"More than {lowLimit} players mapped to same master player");
         }
 
         private void HandleLeagueSequence()
@@ -103,6 +110,7 @@ namespace PlayerMap.Model.MasterPl
                 var newMaxLeague = Leagues.GetLeagueValue(leagueSeason.League.id);
                 if (newMaxLeague < maxLeague)
                 {
+                    //SPLIT!
                     Comments.Add(Leagues.GetComment(maxLeague, newMaxLeague));
                     Correctness = 0;
                     break;

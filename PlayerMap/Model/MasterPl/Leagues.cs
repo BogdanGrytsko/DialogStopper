@@ -44,6 +44,13 @@ namespace PlayerMap.Model.MasterPl
             {"54457dce300969b132fcfb38", "College Women"},
         };
 
+        public static bool IsWomanLeague(string leagueName)
+        {
+            return leagueName.Contains("Girl", StringComparison.OrdinalIgnoreCase) ||
+                   leagueName.Contains("Woman", StringComparison.OrdinalIgnoreCase) ||
+                   leagueName.Contains("WNBA", StringComparison.OrdinalIgnoreCase);
+        }
+
         public static bool InAnyCollege(string id)
         {
             return JuniorCollegeLeagues.ContainsKey(id) || CollegeLeagues.ContainsKey(id);

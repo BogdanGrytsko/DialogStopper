@@ -5,6 +5,7 @@ using DialogStopper.Storage;
 using FluentAssertions;
 using Newtonsoft.Json;
 using PlayerMap.Jazz;
+using PlayerMap.Model;
 using PlayerMap.Model.MasterPl;
 using PlayerMap.Model.Scrape;
 using Xunit;
@@ -23,13 +24,16 @@ namespace PlayerMap
         public void CombinedPlayerMap()
         {
             var mySqlMasterPlayers = MySqlPlayerIdMap.Map();
+            mySqlMasterPlayers.ForEach(x => x.SetName());
             foreach (var masterPlayer in mySqlMasterPlayers)
             {
                 masterPlayer.PlayerIids.Count.Should().BeGreaterThan(1);
             }
 
             var mongoMasterPlayers = MongoPlayerMapping.GetMasterPlayers();
-
+            mongoMasterPlayers.ForEach(x => x.SetName());
+            PlayerSplitter.Split(ref mongoMasterPlayers);
+            
             var mySqlDic = GetDictionary(mySqlMasterPlayers);
             mongoMasterPlayers.ForEach(x => x.AnalyzeCorrectness());
             foreach (var masterPlayer in mongoMasterPlayers)
