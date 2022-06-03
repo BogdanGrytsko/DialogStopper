@@ -38,9 +38,15 @@ namespace PlayerMap.Model.MasterPl
 
         public void AnalyzeCorrectness()
         {
+            FilterOutInternalLeagues();
             HandleCorrectness();
             HandleSeasons();
             HandleLeagueSequence();
+        }
+
+        private void FilterOutInternalLeagues()
+        {
+            LeagueSeasons = LeagueSeasons.Where(x => !Leagues.InternalLeagues.ContainsKey(x.League.id)).ToList();
         }
 
         private void HandleSeasons()
@@ -53,7 +59,7 @@ namespace PlayerMap.Model.MasterPl
 
         private void HandleCorrectness()
         {
-            var lowLimit = 10;
+            var lowLimit = 15;
             var highLimit = 30;
             var cnt = Math.Min(highLimit, Count);
             cnt = Math.Max(cnt, lowLimit);
@@ -65,7 +71,7 @@ namespace PlayerMap.Model.MasterPl
         private void HandleLeagueSequence()
         {
             int maxLeague = -1;
-            foreach (var leagueSeason in LeagueSeasons.Where(x => !Leagues.InternalLeagues.ContainsKey(x.League.id)))
+            foreach (var leagueSeason in LeagueSeasons)
             {
                 var newMaxLeague = Leagues.GetLeagueValue(leagueSeason.League.id);
                 if (newMaxLeague < maxLeague)
@@ -77,8 +83,6 @@ namespace PlayerMap.Model.MasterPl
                 maxLeague = newMaxLeague;
             }
         }
-
-
 
         public int GetDSPlayerId()
         {
