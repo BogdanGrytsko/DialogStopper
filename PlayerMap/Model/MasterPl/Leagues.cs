@@ -47,7 +47,7 @@ namespace PlayerMap.Model.MasterPl
         public static bool IsWomanLeague(string leagueName)
         {
             return leagueName.Contains("Girl", StringComparison.OrdinalIgnoreCase) ||
-                   leagueName.Contains("Woman", StringComparison.OrdinalIgnoreCase) ||
+                   leagueName.Contains("Women", StringComparison.OrdinalIgnoreCase) ||
                    leagueName.Contains("WNBA", StringComparison.OrdinalIgnoreCase);
         }
 

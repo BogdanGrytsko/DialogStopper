@@ -22,8 +22,8 @@ namespace PlayerMap.Model.MasterPl
         public int IDSPlayerId { get; set; }
         
         public double Correctness { get; set; }
-        public string Comment { get; set; }
-        private List<string> Comments { get; set; }
+        public string Comment { get; private set; }
+        public List<string> Comments { get; set; }
 
         public MasterPlayer()
         {

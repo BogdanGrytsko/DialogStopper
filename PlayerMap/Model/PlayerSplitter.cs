@@ -23,6 +23,7 @@ namespace PlayerMap.Model
                         var symbol = @group.Key ? "F" : "M";
                         var clone = new MasterPlayer { Name = player.Name, Key = player.Key + $"_{symbol}" };
                         clone.LeagueSeasons = @group.ToList();
+                        clone.Comments.Add("Split by F/M");
                         res.Add(clone);
                     }
                 }
