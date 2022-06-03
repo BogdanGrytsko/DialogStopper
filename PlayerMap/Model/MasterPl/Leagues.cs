@@ -5,11 +5,12 @@ namespace PlayerMap.Model.MasterPl
 {
     public static class Leagues
     {
-        public const int HighSchool = 1;
-        public const int College = 2;
-        public const int GrownUp = 3;
+        private const int highSchool = 1;
+        private const int juniorCollege = 2;
+        private const int college = 3;
+        private const int grownUp = 4;
         
-        public static Dictionary<string, string> HighSchoolLeagues { get; } = new Dictionary<string, string>
+        private static Dictionary<string, string> HighSchoolLeagues { get; } = new()
         {
             {"5526d40e4bc1ea55eb70f4ef", "Adidas"},
             {"571019cc50238a164768bf93", "Adidas Girls"},
@@ -23,7 +24,7 @@ namespace PlayerMap.Model.MasterPl
             {"571beef550238a1647698b10", "Nike Girls EYBL"},
         };
         
-        public static Dictionary<string, string> InternalLeagues { get; } = new Dictionary<string, string>
+        public static Dictionary<string, string> InternalLeagues { get; } = new()
         {
             {"54457dce300969b132fcfb3c", "Synergy Basketball"},
             {"54457dce300969b132fcfb3e", "Training"},
@@ -31,21 +32,32 @@ namespace PlayerMap.Model.MasterPl
             {"54457dce300969b132fcfb41", "FIBA - National Teams - Women"},
         };
         
-        public static Dictionary<string, string> CollegeLeagues { get; } = new Dictionary<string, string>
+        private static Dictionary<string, string> JuniorCollegeLeagues { get; } = new()
         {
-            {"54457dce300969b132fcfb37", "College Men"},
-            {"54457dce300969b132fcfb38", "College Women"},
             {"584d07c1d95ef3f74c79ab90", "Junior College - Men"},
             {"584d07c1d95ef3f74c79ab91", "Junior College - Women"},
         };
         
+        private static Dictionary<string, string> CollegeLeagues { get; } = new()
+        {
+            {"54457dce300969b132fcfb37", "College Men"},
+            {"54457dce300969b132fcfb38", "College Women"},
+        };
+
+        public static bool InAnyCollege(string id)
+        {
+            return JuniorCollegeLeagues.ContainsKey(id) || CollegeLeagues.ContainsKey(id);
+        }
+        
         public static int GetLeagueValue(string leagueId)
         {
             if (HighSchoolLeagues.ContainsKey(leagueId))
-                return HighSchool;
+                return highSchool;
+            if (JuniorCollegeLeagues.ContainsKey(leagueId))
+                return juniorCollege;
             if (CollegeLeagues.ContainsKey(leagueId))
-                return College;
-            return GrownUp;
+                return college;
+            return grownUp;
         }
 
         public static string GetComment(int maxLeague, int newMaxLeague)
@@ -57,9 +69,10 @@ namespace PlayerMap.Model.MasterPl
         {
             return league switch
             {
-                1 => "High School",
-                2 => "College",
-                3 => "Grown up",
+                highSchool => "High School",
+                juniorCollege => "Junior College",
+                college => "College",
+                grownUp => "Grown up",
                 _ => throw new Exception("Unknown league type")
             };
         }

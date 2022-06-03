@@ -22,6 +22,7 @@ namespace PlayerMap.Model.MasterPl
         
         public double Correctness { get; set; }
         public string Comment { get; set; }
+        private List<string> Comments { get; set; }
 
         public MasterPlayer()
         {
@@ -29,6 +30,7 @@ namespace PlayerMap.Model.MasterPl
             PlayerIids = new HashSet<int>();
             Players = new List<Player>();
             LeagueSeasons = new List<LeagueSeason>();
+            Comments = new List<string>();
         }
 
         public override string ToString()
@@ -39,14 +41,39 @@ namespace PlayerMap.Model.MasterPl
         public void AnalyzeCorrectness()
         {
             FilterOutInternalLeagues();
+            FillInSeasonIids();
+            HandleCollegeYears();
             HandleCorrectness();
             HandleSeasons();
             HandleLeagueSequence();
+            Comment = string.Join("; ", Comments);
         }
 
+        private void FillInSeasonIids()
+        {
+            foreach (var leagueSeason in LeagueSeasons)
+            {
+                leagueSeason.Season.iid = uint.Parse(leagueSeason.Season.Name.Split("-").First());
+            }
+        }
+        
         private void FilterOutInternalLeagues()
         {
             LeagueSeasons = LeagueSeasons.Where(x => !Leagues.InternalLeagues.ContainsKey(x.League.id)).ToList();
+        }
+        
+        private void HandleCollegeYears()
+        {
+            var colleges = LeagueSeasons.Where(x => Leagues.InAnyCollege(x.League.id)).ToList();
+            if (colleges.Any())
+            {
+                var yearMin = colleges.First().Season.iid;
+                var yearMax = colleges.Last().Season.iid;
+                if (yearMax - yearMin > 5)
+                {
+                    Comments.Add("Spent more than 5 years in College");
+                }
+            }
         }
 
         private void HandleSeasons()
@@ -54,7 +81,7 @@ namespace PlayerMap.Model.MasterPl
             if (!LeagueSeasons.Any()) return;
             var x = (double)LeagueSeasons.Select(x => x.Season.Name).Distinct().Count() / LeagueSeasons.Count;
             if (x < 0.6)
-                Comment += "Often playing in 2 leagues";
+                Comments.Add("Often playing in 2 leagues");
         }
 
         private void HandleCorrectness()
@@ -65,7 +92,7 @@ namespace PlayerMap.Model.MasterPl
             cnt = Math.Max(cnt, lowLimit);
             Correctness = 100 - (cnt - lowLimit) * 100 / (highLimit - lowLimit);
             if (Correctness < 100)
-                Comment = "Lot's of players";
+                Comments.Add("Lot's of players");
         }
 
         private void HandleLeagueSequence()
@@ -76,7 +103,7 @@ namespace PlayerMap.Model.MasterPl
                 var newMaxLeague = Leagues.GetLeagueValue(leagueSeason.League.id);
                 if (newMaxLeague < maxLeague)
                 {
-                    Comment = Leagues.GetComment(maxLeague, newMaxLeague);
+                    Comments.Add(Leagues.GetComment(maxLeague, newMaxLeague));
                     Correctness = 0;
                     break;
                 }
