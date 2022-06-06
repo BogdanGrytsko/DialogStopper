@@ -18,12 +18,15 @@ namespace PlayerMap.Jazz
             var masterPlayerMap = new Dictionary<uint, MasterPlayerResult>();
             foreach (var masterPlayer in masterPlayers)
             {
-                foreach (var playerInfo in masterPlayer.PlayerInfos)
+                foreach (var playerIid in masterPlayer.PlayerIids)
                 {
-                    if (!masterPlayerMap.ContainsKey(playerInfo.Player.iid))
-                        masterPlayerMap.Add(playerInfo.Player.iid, masterPlayer);
+                    if (!masterPlayerMap.ContainsKey(playerIid))
+                        masterPlayerMap.Add(playerIid, masterPlayer);
                 }
             }
+
+            if (masterPlayerMap.Count < 1000)
+                throw new Exception("MySql ids got lost");
 
             var jazzGroups = jazzMap.GroupBy(x => x.SourcePlayerId);
             foreach (var jazzGroup in jazzGroups)

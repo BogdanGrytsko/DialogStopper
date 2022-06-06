@@ -12,6 +12,7 @@ namespace PlayerMap.Model.MasterPl
         public string Comment { get; set; }
         public string JazzId { get; set; }
         
+        public HashSet<uint> PlayerIids { get; set; }
         public List<LeagueSeason> PlayerInfos { get; set; }
         public NbaPlayer NbaPlayer { get; set; }
 
