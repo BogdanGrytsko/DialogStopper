@@ -46,13 +46,18 @@ namespace PlayerMap.Model.MasterPl
 
         public void AnalyzeCorrectness()
         {
-            FilterOutInternalLeagues();
-            FillInSeasonIids();
             HandleCollegeYears();
             HandleCorrectness();
             HandleSeasons();
             HandleLeagueSequence();
             Comment = string.Join("; ", Comments);
+        }
+
+        public void SetData()
+        {
+            SetName();
+            FilterOutInternalLeagues();
+            FillInSeasonIids();
         }
 
         private void FillInSeasonIids()
@@ -63,7 +68,7 @@ namespace PlayerMap.Model.MasterPl
             }
         }
         
-        private void FilterOutInternalLeagues()
+        public void FilterOutInternalLeagues()
         {
             LeagueSeasons = LeagueSeasons.Where(x => !Leagues.InternalLeagues.ContainsKey(x.League.id)).ToList();
         }

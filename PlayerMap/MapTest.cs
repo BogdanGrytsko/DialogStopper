@@ -31,7 +31,7 @@ namespace PlayerMap
             }
 
             var mongoMasterPlayers = MongoPlayerMapping.GetMasterPlayers();
-            mongoMasterPlayers.ForEach(x => x.SetName());
+            mongoMasterPlayers.ForEach(x => x.SetData());
             PlayerSplitter.Split(ref mongoMasterPlayers);
             
             var mySqlDic = GetDictionary(mySqlMasterPlayers);
