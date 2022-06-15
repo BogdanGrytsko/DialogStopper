@@ -62,7 +62,9 @@ namespace PlayerMap
             var masterPlayers = JsonConvert.DeserializeObject<List<MasterPlayerResult>>(data);
             JazzMapping.Enhance(masterPlayers);
             NBAMapping.Enhance(masterPlayers);
-             
+            
+            File.WriteAllText(path, JsonConvert.SerializeObject(masterPlayers));
+            
             var flattened = new List<MasterPlayerFlat>();
             foreach (var m in masterPlayers)
             {
