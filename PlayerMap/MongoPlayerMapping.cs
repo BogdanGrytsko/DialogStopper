@@ -96,8 +96,6 @@ namespace PlayerMap
                     if (!string.IsNullOrEmpty(player.Season))
                         mp.LeagueSeasons.Add(player.GetLeagueSeason());
                 }
-                if (mp.PlayerIds.Count == 1)
-                    continue;
                 mp.LeagueSeasons = mp.LeagueSeasons.OrderBy(x => x.Season.Name).ThenBy(x => Leagues.GetLeagueValue(x.League.id)).ToList();
                 mongoMasterPlayers.Add(mp);
             }

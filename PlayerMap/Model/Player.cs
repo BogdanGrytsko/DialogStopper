@@ -58,14 +58,14 @@ namespace PlayerMap.Model
         public string GetKey()
         {
             var key = Name;
-            if (BirthDate >= new DateTime(1950, 1, 1))
-                key += $"_{BirthDate}";
+            // if (BirthDate >= new DateTime(1950, 1, 1))
+            //     key += $"_{BirthDate}";
             // if (!string.IsNullOrWhiteSpace(BirthPlace) &&
             //     !BirthPlace.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
             //     key += $"_{BirthPlace}";
-            if (!string.IsNullOrWhiteSpace(College) &&
-                !College.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
-                key += $"_{College}";
+            // if (!string.IsNullOrWhiteSpace(College) &&
+            //     !College.Equals("NA", StringComparison.InvariantCultureIgnoreCase))
+            //     key += $"_{College}";
             // if (Debut >= new DateTime(1950, 1, 1))
             //     key += $"_{Debut}";
             return key;

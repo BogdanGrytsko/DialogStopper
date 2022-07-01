@@ -7,9 +7,7 @@ namespace PlayerMap.Model.MasterPl
 {
     public class MasterPlayer
     {
-        [System.Text.Json.Serialization.JsonIgnore]
         public HashSet<string> PlayerIds { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
         public HashSet<int> PlayerIids { get; set; }
         [System.Text.Json.Serialization.JsonIgnore]
         public List<Player> Players { get; set; }

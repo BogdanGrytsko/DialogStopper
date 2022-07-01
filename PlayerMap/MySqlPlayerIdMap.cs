@@ -11,7 +11,7 @@ namespace PlayerMap
     {
         public static List<MasterPlayer> Map()
         {
-            var players = new DataImporter<Player, MySqlPlayerMap>().LoadData(@"Data\tblplayers.csv").ToList();
+            var players = new DataImporter<Player, MySqlPlayerMap>().LoadData(@"C:\temp\tblplayers.csv").ToList();
             players = players.OrderBy(x => $"{x.FirstName} {x.LastName}").ToList();
             var playerMap = players.ToDictionary(x => x.Iid);
             var result = new List<MasterPlayer>();
