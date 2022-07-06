@@ -89,13 +89,6 @@ namespace PlayerMap
             DataExporter.Export(flattened, path.Replace("json", "csv"));
         }
 
-        [Fact]
-        public void AllToCsv()
-        {
-            CombinedPlayerMap();
-            JazzNBAToCsv();
-        }
-
         private Dictionary<string, List<MasterPlayer>> GetDictionary(List<MasterPlayer> players)
         {
             var dic = new Dictionary<string, List<MasterPlayer>>();
