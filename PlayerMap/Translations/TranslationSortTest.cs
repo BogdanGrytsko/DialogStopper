@@ -13,7 +13,7 @@ namespace PlayerMap.Translations
         {
             var path = @"Translations\\Translations.csv";
             var lines = File.ReadAllLines(path);
-            var result = lines.Skip(1).OrderBy(x => x.First()).ToList();
+            var result = lines.Skip(1).OrderBy(x => x.Split(";").First()).ToList();
             result = new List<string> { lines.First() }.Concat(result).ToList();
             File.WriteAllLines(@"Translations\\Translations_Sorted.csv", result, Encoding.UTF8);
         }
