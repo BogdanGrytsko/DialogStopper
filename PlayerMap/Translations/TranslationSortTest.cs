@@ -39,6 +39,7 @@ namespace PlayerMap.Translations
                 }
                 
                 var baseWord = words.First().ToPascalCase();
+                baseWord = baseWord.Replace("(%)", string.Empty);;
                 for (int j = 1; j < words.Length; j++)
                 {
                     var word = words[j];
