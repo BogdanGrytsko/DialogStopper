@@ -12,7 +12,7 @@ using Xunit;
 
 namespace PlayerMap
 {
-    public class MapTest
+    public class PlayerMapTest
     {
         [Fact]
         public void MongoPlayerMap()

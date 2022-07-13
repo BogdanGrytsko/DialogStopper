@@ -26,4 +26,10 @@
       <ProjectReference Include="..\DialogStopper\DialogStopper.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Translations\Translations.csv">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
