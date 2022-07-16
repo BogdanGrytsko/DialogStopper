@@ -18,13 +18,14 @@ namespace DialogStopper
             // await new MeditationGoogleSheetStorage().UpdateStats();
             // var x = await new MeditationGoogleSheetStorage().Get();
             // await new MeditationGoogleSheetStorage().Delete(189);
-            var points = new List<long>();
+            var points = new List<(long, PointType)>();
             var sw = new Stopwatch();
             var started = false;
             Console.WriteLine("Program Started. Press Space to start logging");
             while (true)
             {
                 var c = Console.ReadKey();
+                var time = sw.ElapsedMilliseconds / 1000;
                 if (c.Key == ConsoleKey.Spacebar)
                 {
                     if (!started)
@@ -35,20 +36,25 @@ namespace DialogStopper
                     }
                     else
                     {
-                        points.Add(sw.ElapsedMilliseconds / 1000);    
+                        points.Add((time, PointType.SingleThought));    
                     }
+                }
+
+                if (c.Key is ConsoleKey.F or ConsoleKey.J)
+                {
+                    points.Add((time, PointType.ContinuousSegment));
                 }
 
                 if (c.Key == ConsoleKey.Enter)
                 {
-                    points.Add(sw.ElapsedMilliseconds / 1000);
+                    points.Add((time, PointType.SingleThought));
                     sw.Stop();
                     Console.WriteLine("Finished");
                     break;
                 }
             }
             
-            File.AppendAllText(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
+            await File.AppendAllTextAsync(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
             await new MeditationGoogleSheetStorage().Add(new Meditation(DateTime.UtcNow, points));
             Console.WriteLine("Store completed");
         }

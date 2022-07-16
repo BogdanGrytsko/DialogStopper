@@ -12,9 +12,10 @@ namespace DialogStopper
         public double Min { get; private set; }
         public double Max { get; private set; }
         public double Std { get; private set; }
-        public List<long> Points { get; private set; }
+        public double Sum { get; private set; }
+        public List<(long, PointType)> Points { get; private set; }
 
-        public Meditation(DateTime timeStamp, List<long> points)
+        public Meditation(DateTime timeStamp, List<(long, PointType)> points)
         {
             TimeStamp = timeStamp;
             Points = points;
@@ -33,6 +34,7 @@ namespace DialogStopper
             Min = segments.Min();
             Max = segments.Max();
             Std = Math.Round(StandardDeviation(segments));
+            Sum = segments.Sum();
         }
         
         private static double StandardDeviation(ICollection<long> sequence)
@@ -45,15 +47,21 @@ namespace DialogStopper
             return result;
         }
 
-        private static List<long> GetSegments(IEnumerable<long> points)
+        private static List<long> GetSegments(List<(long, PointType)> points)
         {
             var segments = new List<long>();
             var prev = 0l; 
-            foreach (var p in points)
+            foreach (var (time, pointType) in points)
             {
-                var segment = p - prev;
-                segments.Add(segment);
-                prev = p;
+                if (pointType == PointType.SingleThought)
+                {
+                    var segment = time - prev;
+                    segments.Add(segment);
+                }
+                else if (pointType == PointType.ContinuousSegment)
+                {
+                }
+                prev = time;
             }
             return segments;
         }
@@ -64,7 +72,7 @@ namespace DialogStopper
             var arrIdx = line.IndexOf('.');
             var vals = line.Substring(arrIdx + 2).Split(',');
             return new Meditation(DateTime.Parse(line.Substring(0, timeIdx)),
-                vals.Select(long.Parse).ToList());
+                vals.Select(x => (long.Parse(x), PointType.SingleThought)).ToList());
         }
     };
 }
