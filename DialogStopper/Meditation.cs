@@ -13,6 +13,8 @@ namespace DialogStopper
         public double Max { get; private set; }
         public double Std { get; private set; }
         public double Sum { get; private set; }
+        public double Total { get; private set; }
+        public double Percent { get; private set; }
         public List<(long, PointType)> Points { get; private set; }
 
         public Meditation(DateTime timeStamp, List<(long, PointType)> points)
@@ -35,6 +37,8 @@ namespace DialogStopper
             Max = segments.Max();
             Std = Math.Round(StandardDeviation(segments));
             Sum = segments.Sum();
+            Total = Points.Last().Item1;
+            Percent = Math.Round(Sum / Total * 100);
         }
         
         private static double StandardDeviation(ICollection<long> sequence)
@@ -53,6 +57,7 @@ namespace DialogStopper
             var prev = 0l; 
             foreach (var (time, pointType) in points)
             {
+                //todo: focused eyes training log
                 if (pointType == PointType.SingleThought)
                 {
                     var segment = time - prev;
