@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using DialogStopper;
 using DialogStopper.Storage;
@@ -31,6 +32,15 @@ namespace PlayerMap.BasketballReference
         {
             var url = $@"https://www.basketball-reference.com/teams/{team.BBRefTeamId}/{season.BBRefSeasonId}.html";
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
+            //skip headers
+            var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
+            foreach (var row in rows.Skip(1))
+            {
+                var jersey = row.SelectNodes("th").SingleOrDefault()?.InnerText;
+                var player = row.SelectNodes("td//a").First();
+                var trueRef = player.Attributes["href"].Value;
+                var name = player.InnerText;
+            }
             throw new System.NotImplementedException();
         }
     }
