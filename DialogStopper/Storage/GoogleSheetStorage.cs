@@ -16,14 +16,14 @@ namespace DialogStopper.Storage
     {
         private const string listSeparator = ";";
         private static readonly string[] scopes = { SheetsService.Scope.Spreadsheets };
-        
-        protected readonly string SheetId;
+
+        private readonly string sheetId;
         protected readonly SheetsService SheetsService;
         protected readonly PropertyInfo[] PropertyInfos = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
         public GoogleSheetStorage(string sheetId)
         {
-            SheetId = sheetId;
+            this.sheetId = sheetId;
             using var fs = File.OpenRead("api-keys.json");
             var credential = GoogleCredential.FromStream(fs).CreateScoped(scopes);
             SheetsService = new SheetsService(new BaseClientService.Initializer
@@ -68,7 +68,7 @@ namespace DialogStopper.Storage
                 valueRange.Values.Add(rowValues);
             }
 
-            var appendRequest = SheetsService.Spreadsheets.Values.Append(valueRange, SheetId, GetRange());
+            var appendRequest = SheetsService.Spreadsheets.Values.Append(valueRange, sheetId, GetRange());
             appendRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
             await appendRequest.ExecuteAsync();
@@ -84,7 +84,7 @@ namespace DialogStopper.Storage
             await Add(new List<T> { entry }, false);
         }
 
-        protected string GetRange(int? startRow = null, int? endRow = null)
+        private string GetRange(int? startRow = null, int? endRow = null)
         {
             return $"{SheetName}!A{startRow}:{GetEndLetter()}{endRow}";
         }
@@ -95,16 +95,18 @@ namespace DialogStopper.Storage
                 throw new Exception("Not supported yet");
             return ((char)('A' - 1 + PropertyInfos.Length)).ToString();
         }
-        
-        public async Task<List<T>> Get(int? endRow = null)
+
+        protected async Task<List<T>> Get(int startRow = 1, int? endRow = null)
         {
-            var request = SheetsService.Spreadsheets.Values.Get(SheetId, GetRange(1, endRow));
+            var range = GetRange(startRow, endRow);
+            var request = SheetsService.Spreadsheets.Values.Get(sheetId, range);
             var response = await request.ExecuteAsync();
             var values = response.Values;
             
-            var map = GetHeaderMap(values.First());
+            var map = await GetHeaderMap(values.First(), startRow);
             var result = new List<T>();
-            foreach (var valueList in values.Skip(1))
+            //skip only if header present : startRow == 1
+            foreach (var valueList in startRow == 1 ? values.Skip(1) : values)
             {
                 var data = new T();
                 foreach (var prop in PropertyInfos)
@@ -113,13 +115,13 @@ namespace DialogStopper.Storage
                     var type = prop.PropertyType;
                     if (!IsEnumerable(prop))
                     {
-                        var converted = Convert.ChangeType(value, type);
-                        SetPropValue(data, prop, converted);    
+                        var converted = GetConvertedValue(value, type);
+                        SetPropValue(data, prop, converted);
                     }
-                    else if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(IList<>) 
-                        || type.GetGenericTypeDefinition() == typeof(List<>)))
+                    else if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(IList<>)
+                                                    || type.GetGenericTypeDefinition() == typeof(List<>)))
                     {
-                        Type itemType = type.GetGenericArguments()[0];
+                        var itemType = type.GetGenericArguments()[0];
                         var split = ((string)value).Split(listSeparator, StringSplitOptions.RemoveEmptyEntries);
                         var listType = typeof(List<>);
                         var constructedListType = listType.MakeGenericType(itemType);
@@ -127,20 +129,49 @@ namespace DialogStopper.Storage
 
                         foreach (var s in split)
                         {
-                            var x = Convert.ChangeType(s, itemType);
+                            var x = ParseListObject(s, itemType);
                             instance.Add(x);
                         }
+
                         SetPropValue(data, prop, instance);
                     }
                 }
+
                 result.Add(data);
             }
+
             return result;
         }
-        
-        protected static Dictionary<string, int> GetHeaderMap(IList<object> headers)
+
+        protected virtual object ParseListObject(string s, Type itemType)
+        {
+            return Convert.ChangeType(s, itemType);
+        }
+
+        private static object GetConvertedValue(object value, Type type)
+        {
+            if (value is string && string.IsNullOrEmpty(value.ToString()))
+                return GetDefault(type);
+            return Convert.ChangeType(value, type);
+        }
+
+        private static object GetDefault(Type type)
+        {
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
+
+        private async Task<Dictionary<string, int>> GetHeaderMap(IList<object> headers, int startRow)
         {
             var headerMap = new Dictionary<string, int>();
+            if (startRow != 1)
+            {
+                var range = GetRange(1, 1);
+                var request = SheetsService.Spreadsheets.Values.Get(sheetId, range);
+                var response = await request.ExecuteAsync();
+                var values = response.Values;
+                headers = values.First();
+            }
+            
             for (int i = 0; i < headers.Count; i++)
             {
                 headerMap.Add(headers[i].ToString(), i);
@@ -148,13 +179,13 @@ namespace DialogStopper.Storage
 
             return headerMap;
         }
-        
-        public static object GetPropValue(object src, PropertyInfo propertyInfo)
+
+        private static object GetPropValue(object src, PropertyInfo propertyInfo)
         {
             return propertyInfo.GetValue(src, null);
         }
 
-        public static void SetPropValue(object src, PropertyInfo propertyInfo, object value)
+        private static void SetPropValue(object src, PropertyInfo propertyInfo, object value)
         {
             if (propertyInfo.CanWrite)
                 propertyInfo.SetValue(src, value);
@@ -164,7 +195,7 @@ namespace DialogStopper.Storage
         {
             var requestBody = new ClearValuesRequest();
             var deleteRequest =
-                SheetsService.Spreadsheets.Values.Clear(requestBody, SheetId, GetRange(startRow, endRow ?? startRow));
+                SheetsService.Spreadsheets.Values.Clear(requestBody, sheetId, GetRange(startRow, endRow ?? startRow));
             await deleteRequest.ExecuteAsync();
         }
 
@@ -177,7 +208,7 @@ namespace DialogStopper.Storage
             
             var valueRange = new ValueRange { Values = lists };
             //todo : fix
-            var updateRequest = SheetsService.Spreadsheets.Values.Update(valueRange, SheetId, GetRange(-1, -1));
+            var updateRequest = SheetsService.Spreadsheets.Values.Update(valueRange, sheetId, GetRange(-1, -1));
             updateRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await updateRequest.ExecuteAsync();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace DialogStopper
 {
@@ -29,7 +30,7 @@ namespace DialogStopper
         {
         }
 
-        public void Calculate()
+        private void Calculate()
         {
             var segments = GetSegments(Points);
             Avg = Math.Round(segments.Average());
@@ -54,7 +55,7 @@ namespace DialogStopper
         private static List<long> GetSegments(List<(long, PointType)> points)
         {
             var segments = new List<long>();
-            var prev = 0l; 
+            var prev = 0L; 
             foreach (var (time, pointType) in points)
             {
                 //todo: focused eyes training log
@@ -73,11 +74,7 @@ namespace DialogStopper
 
         public static Meditation FromTxtFile(string line)
         {
-            var timeIdx = line.LastIndexOf(':');
-            var arrIdx = line.IndexOf('.');
-            var vals = line.Substring(arrIdx + 2).Split(',');
-            return new Meditation(DateTime.Parse(line.Substring(0, timeIdx)),
-                vals.Select(x => (long.Parse(x), PointType.SingleThought)).ToList());
+            return JsonConvert.DeserializeObject<Meditation>(line);
         }
     };
 }

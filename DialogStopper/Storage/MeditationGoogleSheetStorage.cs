@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -27,16 +28,15 @@ namespace DialogStopper.Storage
             await Add(entries, !data.Any());
         }
 
-        public async Task UpdateStats()
+        public async Task UpdateStats(int startRow)
         {
-            var data = await Get();
-
-            var updateRange = $"{SheetName}!C2:F{data.Count + 1}";
+            var data = await Get(startRow);
+            var updateRange = $"{SheetName}!C{startRow}:I{startRow + data.Count - 1}";
             var lists = new List<IList<object>>();
             foreach (var line in data)
             {
                 var entry = new Meditation(DateTime.MinValue, line.Points);
-                lists.Add(new List<object> {Math.Round(entry.Avg), entry.Min, entry.Max, Math.Round(entry.Std)});
+                lists.Add(new List<object> {Math.Round(entry.Avg), entry.Min, entry.Max, Math.Round(entry.Std), entry.Sum, entry.Total, entry.Percent});
             }
 
             var valueRange = new ValueRange { Values = lists };
@@ -44,6 +44,14 @@ namespace DialogStopper.Storage
             updateRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
             await updateRequest.ExecuteAsync();
+        }
+
+        protected override object ParseListObject(string s, Type itemType)
+        {
+            var data = s.Replace("(", string.Empty).Replace(")", string.Empty);
+            var vals = data.Split(",");
+            Enum.TryParse(vals[1], out PointType pointType);
+            return (long.Parse(vals[0]), pointType);
         }
     }
 }

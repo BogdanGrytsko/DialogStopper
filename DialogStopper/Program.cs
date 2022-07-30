@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using DialogStopper.Storage;
+using Newtonsoft.Json;
 
 namespace DialogStopper
 {
@@ -15,7 +15,7 @@ namespace DialogStopper
         static async Task Main(string[] args)
         {
             // await new MeditationGoogleSheetStorage().AddFromFile(logFile);
-            // await new MeditationGoogleSheetStorage().UpdateStats();
+            // await new MeditationGoogleSheetStorage().UpdateStats(597);
             // var x = await new MeditationGoogleSheetStorage().Get();
             // await new MeditationGoogleSheetStorage().Delete(189);
             var points = new List<(long, PointType)>();
@@ -53,9 +53,10 @@ namespace DialogStopper
                     break;
                 }
             }
-            
-            await File.AppendAllTextAsync(logFile, $"{DateTime.UtcNow}: {points.Count}. {string.Join(",", points)}{Environment.NewLine}");
-            await new MeditationGoogleSheetStorage().Add(new Meditation(DateTime.UtcNow, points));
+
+            var meditation = new Meditation(DateTime.UtcNow, points);
+            await File.AppendAllTextAsync(logFile, JsonConvert.SerializeObject(meditation));
+            await new MeditationGoogleSheetStorage().Add(meditation);
             Console.WriteLine("Store completed");
         }
     }

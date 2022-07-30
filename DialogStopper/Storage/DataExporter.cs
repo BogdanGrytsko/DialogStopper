@@ -9,7 +9,7 @@ namespace DialogStopper.Storage
 {
     public class DataExporter
     {
-        public static void Export<T>(List<T> data, string path, string? delimiter = null)
+        public static void Export<T>(List<T> data, string path, string delimiter = null)
         {
             var config = new CsvConfiguration(CultureInfo.CurrentCulture)
                 { Delimiter = delimiter ?? ";", Encoding = Encoding.UTF8 };
