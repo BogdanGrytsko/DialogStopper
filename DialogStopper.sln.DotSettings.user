@@ -1,10 +1,10 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6d26f19b_002D1ea6_002D4fc1_002Da3e4_002Dc5b3c0e6ec37/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6d26f19b_002D1ea6_002D4fc1_002Da3e4_002Dc5b3c0e6ec37/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Not&gt;&#xD;
     &lt;Project Location="C:\Work\Repos\DialogStopper\DialogStopper\TraderTest" Presentation="&amp;lt;TraderTest&amp;gt;" /&gt;&#xD;
   &lt;/Not&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7605c9b4_002D4acc_002D4ef8_002Dbc2a_002D7bd0a3c9e149/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="HighAndLow" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7605c9b4_002D4acc_002D4ef8_002Dbc2a_002D7bd0a3c9e149/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="HighAndLow" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Not&gt;&#xD;
     &lt;Project Location="C:\Work\Repos\DialogStopper\DialogStopper\TraderTest" Presentation="&amp;lt;TraderTest&amp;gt;" /&gt;&#xD;
   &lt;/Not&gt;&#xD;

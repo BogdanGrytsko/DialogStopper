@@ -28,5 +28,12 @@ namespace DialogStopper.Storage
             var records = csv.GetRecords<T>();
             return records.ToList();
         }
+
+        public List<T> LoadData(byte[] file, string delimiter = null)
+        {
+            using var ms = new MemoryStream(file);
+            using var reader = new StreamReader(ms, true);
+            return LoadData(reader, delimiter);
+        }
     }
 }
