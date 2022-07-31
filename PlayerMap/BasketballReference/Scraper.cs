@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -37,13 +38,14 @@ namespace PlayerMap.BasketballReference
             await File.WriteAllTextAsync(@"C:\temp\Sportradar\BBRefPlayers.json", json);
         }
 
-        private async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers)
+        private static async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers)
         {
             var url = $@"https://www.basketball-reference.com/teams/{team.BBRefTeamId}/{season.BBRefSeasonId}.html";
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
+            if (PageNotFound(doc))
+                return;
             //skip headers
             var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
-            
             foreach (var row in rows)
             {
                 var player = RoasterTableParser.GetPlayer(row);
@@ -53,6 +55,13 @@ namespace PlayerMap.BasketballReference
                 player.MongoSeasonId = season.MongoSeasonId;
                 bbRefPlayers.Add(player);
             }
+        }
+
+        private static bool PageNotFound(HtmlDocument doc)
+        {
+            var h1 = doc.DocumentNode.SelectNodes(@"//h1");
+            return h1 != null && h1.First().InnerText
+                .Equals("Page Not Found (404 error)", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
