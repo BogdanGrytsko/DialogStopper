@@ -22,12 +22,15 @@ namespace PlayerMap.BasketballReference
             //for Given League, Season, Number, PlayerName
             
             var playerCareers = new List<PlayerCareer>();
-            foreach (var bbRefPlayer in scrapedPlayers)
+            foreach (var group in scrapedPlayers.GroupBy(x => x.Url))
             {
-                var pc = new PlayerCareer { BBRefPlayer = bbRefPlayer };
-                playerMap.TryGetValue(GetMongoKey(bbRefPlayer), out var possiblePlayers);
-                Map(pc, possiblePlayers);
-                playerCareers.Add(pc);
+                foreach (var bbRefPlayer in group)
+                {
+                    var pc = new PlayerCareer { BBRefPlayer = bbRefPlayer };
+                    playerMap.TryGetValue(GetMongoKey(bbRefPlayer), out var possiblePlayers);
+                    Map(pc, possiblePlayers);
+                    playerCareers.Add(pc);
+                }
             }
             
             DataExporter.Export(playerCareers, @"C:\temp\Sportradar\PlayerCareers.csv");
@@ -43,16 +46,16 @@ namespace PlayerMap.BasketballReference
 
             var byNumber = possiblePlayers.FirstOrDefault(x => x.Number.HasValue && x.Number != 0 && x.Number == pc.BBRefPlayer.Number);
             var byName = GetByNameMatch(possiblePlayers, pc.BBRefPlayer).ToList();
-            var mongoPlayerId = GetPlayerId(byNumber, byName, out var comment);
+            var mongoPlayerId = GetPlayerId(byNumber, byName, pc.BBRefPlayer.Number, out var comment);
             pc.Comment = comment;
             pc.MongoPlayerId = mongoPlayerId;
         }
 
-        private static string GetPlayerId(Player byNumber, List<Player> byName, out string comment)
+        private static string GetPlayerId(Player byNumber, List<Player> byName, int number, out string comment)
         {
             if (byName.Count == 1 && byNumber != null)
             {
-                if (byName.Single().Id == byNumber.Id)
+                if (byName.Single().Id == byNumber.Id || byName.Single().Number == number)
                 {
                     comment = "Strong match by both name and number";
                     return byNumber.Id;
