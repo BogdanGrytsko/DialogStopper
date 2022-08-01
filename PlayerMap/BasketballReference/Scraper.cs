@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using DialogStopper;
 using DialogStopper.Storage;
 using HtmlAgilityPack;
-using Newtonsoft.Json;
 using PlayerMap.BasketballReference.Model;
 
 namespace PlayerMap.BasketballReference
@@ -32,8 +30,6 @@ namespace PlayerMap.BasketballReference
                 }
             }
             DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers.csv");
-            var json = JsonConvert.SerializeObject(players);
-            await File.WriteAllTextAsync(@"C:\temp\Sportradar\BBRefPlayers.json", json);
         }
 
         private static async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers)

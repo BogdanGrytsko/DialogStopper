@@ -12,7 +12,7 @@ namespace PlayerMap.BasketballReference.Model
         public string Weight { get; set; }
         public DateTime BirthDate { get; set; }
         public string BirthCountry { get; set; }
-        public string YearsOfExpirience { get; set; }
+        public string YearsOfExperience { get; set; }
         public string College { get; set; }
         public string CollegeUrl { get; set; }
         
@@ -20,7 +20,7 @@ namespace PlayerMap.BasketballReference.Model
         public string MongoTeamId { get; set; }
         public string SeasonName { get; set; }
         public string MongoSeasonId { get; set; }
-
+        
         public override string ToString()
         {
             return $"{Number} {Name}";

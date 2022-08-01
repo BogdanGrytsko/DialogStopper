@@ -22,7 +22,7 @@ namespace PlayerMap.BasketballReference
                 Height = GetText(row, "height"),
                 Weight = GetText(row, "weight"),
                 BirthCountry = GetText(row, "birth_country"),
-                YearsOfExpirience = GetText(row, "years_experience")
+                YearsOfExperience = GetText(row, "years_experience")
             };
             if (int.TryParse(number, out var numberInt))
                 bbRefPlayer.Number = numberInt;

@@ -22,21 +22,33 @@ namespace PlayerMap.Model
         public string LeagueId { get; set; }
         public string Season { get; set; }
         public string SeasonId { get; set; }
+        public Team TeamObj { get; set; }
+        public int Number { get; set; }
 
         public LeagueSeason GetLeagueSeason()
         {
-            var team = JsonConvert.DeserializeObject<Team>(Team);
-            var teamId = string.IsNullOrEmpty(Team)
-                ? null
-                : Team.Split(",")[0].Split(new string[] { "oid", "}", ":", "\"", " ", "{", "$" },
-                    StringSplitOptions.RemoveEmptyEntries);
+            if (TeamObj == null)
+                ParseTeam();
+            
             return new LeagueSeason
             {
                 League = new MonikerRef(LeagueId, League),
                 Season = new BasicMonikerRef(SeasonId, Season),
                 Player = new BasicMonikerRef(Id, GetName()),
-                Team = new MonikerRef(teamId?[1], team?.Name)
+                Team = new MonikerRef(TeamObj?.MongoId, TeamObj?.Name)
             };
+        }
+
+        public void ParseTeam()
+        {
+            TeamObj = JsonConvert.DeserializeObject<Team>(Team);
+            if (TeamObj != null)
+            {
+                TeamObj.MongoId = string.IsNullOrEmpty(Team)
+                    ? null
+                    : Team.Split(",")[0].Split(new string[] { "oid", "}", ":", "\"", " ", "{", "$" },
+                        StringSplitOptions.RemoveEmptyEntries)[1];
+            }
         }
         
         //actually MySQl
