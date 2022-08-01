@@ -9,13 +9,11 @@ using DialogStopper.Storage;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using PlayerMap.BasketballReference.Model;
-using Xunit;
 
 namespace PlayerMap.BasketballReference
 {
     public class Scraper
     {
-        [Fact]
         public async Task DoWork()
         {
             var teamsData = Helper.GetResource(
