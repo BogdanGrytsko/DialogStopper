@@ -27,6 +27,7 @@ namespace PlayerMap.BasketballReference
                 var pc = new PlayerCareer { BBRefPlayer = bbRefPlayer };
                 playerMap.TryGetValue(GetMongoKey(bbRefPlayer), out var possiblePlayers);
                 Map(pc, possiblePlayers);
+                playerCareers.Add(pc);
             }
             
             DataExporter.Export(playerCareers, @"C:\temp\Sportradar\PlayerCareers.csv");
