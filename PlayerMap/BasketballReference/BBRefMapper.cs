@@ -41,7 +41,7 @@ namespace PlayerMap.BasketballReference
                 return;
             }
 
-            var byNumber = possiblePlayers.FirstOrDefault(x => x.Number != 0 && x.Number == pc.BBRefPlayer.Number);
+            var byNumber = possiblePlayers.FirstOrDefault(x => x.Number.HasValue && x.Number != 0 && x.Number == pc.BBRefPlayer.Number);
             var byName = GetByNameMatch(possiblePlayers, pc.BBRefPlayer).ToList();
             var mongoPlayerId = GetPlayerId(byNumber, byName, out var comment);
             pc.Comment = comment;

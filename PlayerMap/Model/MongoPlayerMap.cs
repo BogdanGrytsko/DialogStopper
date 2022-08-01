@@ -16,6 +16,7 @@ namespace PlayerMap.Model
             Map(m => m.Height).Name("height");
             Map(m => m.Weight).Name("weight");
             Map(m => m.Team).Name("team");
+            Map(m => m.Number).Name("number");
         }
     }
 }

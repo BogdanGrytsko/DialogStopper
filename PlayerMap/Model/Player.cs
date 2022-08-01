@@ -23,7 +23,7 @@ namespace PlayerMap.Model
         public string Season { get; set; }
         public string SeasonId { get; set; }
         public Team TeamObj { get; set; }
-        public int Number { get; set; }
+        public int? Number { get; set; }
 
         public LeagueSeason GetLeagueSeason()
         {
@@ -93,6 +93,11 @@ namespace PlayerMap.Model
         public static string RemoveSpecialCharacters(string str)
         {
             return Regex.Replace(str, "[^a-zA-Z0-9_.]+", "", RegexOptions.Compiled);
+        }
+
+        public Player Clone()
+        {
+            return (Player)MemberwiseClone();
         }
     }
 }

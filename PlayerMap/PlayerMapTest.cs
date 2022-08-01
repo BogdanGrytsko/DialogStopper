@@ -21,6 +21,13 @@ namespace PlayerMap
         }
 
         [Fact]
+        public void StorePlayer()
+        {
+            var player = new Player {Key = "asd"};
+            DataExporter.Export<Player, MongoMasterPlayerMap>(new List<Player> { player }, @"C:\temp\master.players-xx.csv");
+        }
+
+        [Fact]
         public void CombinedPlayerMap()
         {
             var mySqlMasterPlayers = MySqlPlayerIdMap.Map();

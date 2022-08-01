@@ -20,10 +20,7 @@ namespace PlayerMap
             var boxScores = GetBoxScoresMap(zip.Entries.Single(x => x.Name == "allBoxScores.csv"));
 
             var groups = players.GroupBy(x => x.GetKey()).OrderBy(x => x.Key).ToList();
-            var matchedGroups = groups.Where(x => x.Count() > 1).OrderBy(x => x.Key).ToList();
-            var singleGroupPlayers = groups.Count - matchedGroups.Count;
-            var sb = new StringBuilder();
-            sb.AppendLine($"Key;Id;Name;League;LeagueId;Season;SeasonId;BirthDate;BirthPlace;College;Debut;Height;Weight;Team;Iid");
+            var resultPlayers = new List<Player>();
             foreach (var group in groups)
             {
                 foreach (var p in group)
@@ -33,11 +30,17 @@ namespace PlayerMap
                     
                     foreach (var bs in playerBs)
                     {
-                        sb.AppendLine($"{group.Key};{p.Id};{p.Name};{bs.LeagueName};{bs.LeagueId};{bs.SeasonName};{bs.SeasonId};{p.BirthDate};{p.BirthPlace};{p.College};{p.Debut};{p.Height};{p.Weight};{p.Team};{p.Iid}");    
+                        var clone = p.Clone();
+                        clone.Key = group.Key;
+                        clone.League = bs.LeagueName;
+                        clone.LeagueId = bs.LeagueId;
+                        clone.Season = bs.SeasonName;
+                        clone.SeasonId = bs.SeasonId;
+                        resultPlayers.Add(clone);
                     }
                 }
             }
-            File.WriteAllText(@"C:\temp\master.players.csv", sb.ToString());
+            DataExporter.Export<Player, MongoMasterPlayerMap>(resultPlayers, @"C:\temp\master.players.csv");
         }
 
         private static List<Player> GetPlayers(ZipArchiveEntry zipArchiveEntry)
