@@ -104,7 +104,7 @@ namespace PlayerMap.BasketballReference
 
         private static string PrepareName(string name)
         {
-            return name.Replace(".", string.Empty).ToUpper();
+            return name.ToUpper();
         }
 
         private static string GetMongoKey(BBRefPlayer player)
