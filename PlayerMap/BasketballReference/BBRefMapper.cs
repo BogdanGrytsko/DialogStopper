@@ -97,9 +97,14 @@ namespace PlayerMap.BasketballReference
         {
             foreach (var possiblePlayer in possiblePlayers)
             {
-                if (Fuzz.Ratio(possiblePlayer.Name, bbRefPlayer.Name) > 95)
+                if (Fuzz.Ratio(PrepareName(possiblePlayer.Name), PrepareName(bbRefPlayer.Name)) >= 95)
                     yield return possiblePlayer;
             }
+        }
+
+        private static string PrepareName(string name)
+        {
+            return name.Replace(".", string.Empty).ToUpper();
         }
 
         private static string GetMongoKey(BBRefPlayer player)
