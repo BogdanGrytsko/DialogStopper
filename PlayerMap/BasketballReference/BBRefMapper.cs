@@ -16,7 +16,7 @@ namespace PlayerMap.BasketballReference
         {
             var scrapedPlayers = new DataImporter<BBRefPlayer, BBRefPlayerMap>().LoadData(@"C:\temp\Sportradar\BBRefPlayers.csv", ";").ToList();
             var mongoPlayers = new DataImporter<Player, MongoMasterPlayerMap>().LoadData(@"C:\temp\master.players.csv", ";").ToList();
-            var leaguePlayers = mongoPlayers.Where(x => x.LeagueId == NBA || x.LeagueId == WNBA).ToList();
+            var leaguePlayers = mongoPlayers.Where(x => x.LeagueId == NBA).ToList();
             leaguePlayers.ForEach(x => x.ParseTeam());
             var playerMap = GetMongoPlayerMap(leaguePlayers);
             //for Given League, Season, Number, PlayerName
