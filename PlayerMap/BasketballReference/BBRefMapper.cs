@@ -53,16 +53,30 @@ namespace PlayerMap.BasketballReference
 
         private static string GetPlayerId(Player byNumber, List<Player> byName, int number, out string comment)
         {
-            if (byName.Count == 1 && byNumber != null)
+            if (byName.Any() && byNumber != null)
             {
-                if (byName.Single().Id == byNumber.Id || byName.Single().Number == number)
+                var byNameAndNumber = byName.Where(x => x.Number == number).ToList();
+                if (byNameAndNumber.Count == 1)
                 {
-                    comment = "Strong match by both name and number";
-                    return byNumber.Id;
+                    if (byNameAndNumber.Single().Id == byNumber.Id)
+                    {
+                        comment = "Strong match by both name and number";
+                        return byNumber.Id;
+                    }
+                    else
+                    {
+                        comment = "Jersey number and name both found and don't match";
+                        return null;
+                    }
+                }
+                else if (byNameAndNumber.Count > 1)
+                {
+                    comment = "Strong match by both name and number. Multiple Mongo players matched";
+                    return string.Join(";", byNameAndNumber.Select(x => x.Id).ToArray());
                 }
                 else
                 {
-                    comment = "Jersey number and name both found and don't match";
+                    comment = "Name and jersey number point to different players";
                     return null;
                 }
             }
