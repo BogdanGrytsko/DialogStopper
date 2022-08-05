@@ -11,6 +11,7 @@ namespace PlayerMap.BasketballReference
     {
         private const string NBA = "54457dce300969b132fcfb34", WNBA = "54457dce300969b132fcfb35";
         private const int MinRating = 95;
+        private const int WeakRating = 80;
         
         public async Task Map()
         {
@@ -46,23 +47,28 @@ namespace PlayerMap.BasketballReference
             }
 
             var fuzzRated = GetFuzzRating(possiblePlayers, pc.BBRefPlayer).OrderByDescending(x => x.Item2).ToList();
-            var ratedPlayer = GetRatedPlayer(fuzzRated, pc.BBRefPlayer.Number);
+            var ratedPlayer = GetRatedPlayer(fuzzRated, pc.BBRefPlayer.Number, MinRating);
+            if (ratedPlayer.MongoPlayerId == null)
+            {
+                var weakRated = fuzzRated.Where(x => x.Item2 >= WeakRating).Take(1).ToList();
+                ratedPlayer = GetRatedPlayer(weakRated, pc.BBRefPlayer.Number, WeakRating, "Weak ");
+            }
             pc.MongoPlayer = ratedPlayer;
         }
 
-        private static RatedMongoPlayer GetRatedPlayer(List<(MongoPlayerDto player, int rating)> fuzzRated, int number)
+        private static RatedMongoPlayer GetRatedPlayer(List<(MongoPlayerDto player, int rating)> fuzzRated, int number, int minRating, string prefix = null)
         {
-            var byName = fuzzRated.Where(x => x.Item2 >= MinRating).ToList();
+            var byName = fuzzRated.Where(x => x.Item2 >= minRating).ToList();
             if (byName.Any())
             {
                 var byNameAndNumber = byName.Where(x => x.player.Number == number).ToList();
                 if (byNameAndNumber.Count >= 1)
                 {
-                    return RatePlayer(byNameAndNumber, "Match by name and number");
+                    return RatePlayer(byNameAndNumber, $"{prefix}Match by name and number");
                 }
                 if (byName.Count >= 1)
                 {
-                    return RatePlayer(byName, "Match by name only");
+                    return RatePlayer(byName, $"{prefix}Match by name only");
                 }
             }
 
