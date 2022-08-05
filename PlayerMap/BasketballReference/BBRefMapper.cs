@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DialogStopper.Storage;
 using FuzzySharp;
 using PlayerMap.BasketballReference.Model;
-using PlayerMap.Model;
 
 namespace PlayerMap.BasketballReference
 {
@@ -15,11 +14,8 @@ namespace PlayerMap.BasketballReference
         public async Task Map()
         {
             var scrapedPlayers = new DataImporter<BBRefPlayer, BBRefPlayerMap>().LoadData(@"C:\temp\Sportradar\BBRefPlayers.csv", ";").ToList();
-            var mongoPlayers = new DataImporter<Player, MongoMasterPlayerMap>().LoadData(@"C:\temp\master.players.csv", ";").ToList();
-            var leaguePlayers = mongoPlayers.Where(x => x.LeagueId == NBA).ToList();
-            leaguePlayers.ForEach(x => x.ParseTeam());
-            var playerMap = GetMongoPlayerMap(leaguePlayers);
-            //for Given League, Season, Number, PlayerName
+            var mongoPlayers = new DataImporter<MongoPlayerDto, MongoPlayerDtoMap>().LoadData(@"C:\temp\Sportradar\AllPlayers.csv", ";").ToList();
+            var playerMap = GetMongoPlayerMap(mongoPlayers);
             
             var playerCareers = new List<PlayerCareer>();
             foreach (var group in scrapedPlayers.GroupBy(x => x.Url))
@@ -36,7 +32,7 @@ namespace PlayerMap.BasketballReference
             DataExporter.Export(playerCareers, @"C:\temp\Sportradar\PlayerCareers.csv");
         }
 
-        private static void Map(PlayerCareer pc, List<Player> possiblePlayers)
+        private static void Map(PlayerCareer pc, List<MongoPlayerDto> possiblePlayers)
         {
             if (!possiblePlayers.Any())
             {
@@ -44,70 +40,46 @@ namespace PlayerMap.BasketballReference
                 return;
             }
 
-            var byNumber = possiblePlayers.FirstOrDefault(x => x.Number.HasValue && x.Number != 0 && x.Number == pc.BBRefPlayer.Number);
+            //algo change : team + name. If number = single = good match. Flag if multi. If 
             var byName = GetByNameMatch(possiblePlayers, pc.BBRefPlayer).ToList();
-            var mongoPlayerId = GetPlayerId(byNumber, byName, pc.BBRefPlayer.Number, out var comment);
+            var mongoPlayerId = GetPlayerId(byName, pc.BBRefPlayer.Number, out var comment);
             pc.Comment = comment;
             pc.MongoPlayerId = mongoPlayerId;
         }
 
-        private static string GetPlayerId(Player byNumber, List<Player> byName, int number, out string comment)
+        private static string GetPlayerId(List<MongoPlayerDto> byName, int number, out string comment)
         {
-            if (byName.Any() && byNumber != null)
+            if (byName.Any())
             {
                 var byNameAndNumber = byName.Where(x => x.Number == number).ToList();
                 if (byNameAndNumber.Count == 1)
                 {
-                    if (byNameAndNumber.Single().Id == byNumber.Id)
-                    {
-                        comment = "Strong match by both name and number";
-                        return byNumber.Id;
-                    }
-                    else
-                    {
-                        comment = "Jersey number and name both found and don't match";
-                        return null;
-                    }
+                    comment = "Strong match by both name and number";
+                    return byNameAndNumber.Single().Id;
                 }
-                else if (byNameAndNumber.Count > 1)
+                if (byNameAndNumber.Count > 1)
                 {
-                    comment = "Strong match by both name and number. Multiple Mongo players matched";
+                    comment = "Multi match by both name and number. Use events to refine";
                     return string.Join(";", byNameAndNumber.Select(x => x.Id).ToArray());
                 }
-                else
-                {
-                    comment = "Name and jersey number point to different players";
-                    return null;
-                }
-            }
-            else if (!byName.Any() && byNumber != null)
-            {
-                comment = "Selected by jersey number only";
-                return byNumber.Id;
-            }
-            else if (byName.Any() && byNumber == null)
-            {
-                comment = "Selected by name only";
+                //only name
                 if (byName.Count == 1)
+                {
+                    comment = "Match only by name";
                     return byName.Single().Id;
+                }
                 else
                 {
-                    comment += ". Multiple players found in Mongo. Mapped to first";
-                    return byName.First().Id;
+                    comment = "Multi match only by name. Use events to refine";     
+                    return string.Join(";", byName.Select(x => x.Id).ToArray());
                 }
-            }
-            else if (!byName.Any() && byNumber == null)
-            {
-                comment = "No players found by name or jersey number";
-                return null;
             }
 
-            //we shouldn't get here
-            comment = null;
+            comment = "No players found by name";
             return null;
         }
 
-        private static IEnumerable<Player> GetByNameMatch(List<Player> possiblePlayers, BBRefPlayer bbRefPlayer)
+        private static IEnumerable<MongoPlayerDto> GetByNameMatch(List<MongoPlayerDto> possiblePlayers, BBRefPlayer bbRefPlayer)
         {
             foreach (var possiblePlayer in possiblePlayers)
             {
@@ -123,12 +95,13 @@ namespace PlayerMap.BasketballReference
 
         private static string GetMongoKey(BBRefPlayer player)
         {
-            return $"{player.MongoSeasonId}_{player.MongoTeamId}";
+            return player.MongoTeamId;
         }
 
-        private static Dictionary<string, List<Player>> GetMongoPlayerMap(List<Player> leaguePlayers)
+        private static Dictionary<string, List<MongoPlayerDto>> GetMongoPlayerMap(List<MongoPlayerDto> leaguePlayers)
         {
-            return leaguePlayers.GroupBy(x => $"{x.SeasonId}_{x.TeamObj.MongoId}" ).ToDictionary(x => x.Key, x => x.ToList());
+            return leaguePlayers.GroupBy(x => x.MongoTeamId)
+                .ToDictionary(x => x.Key, x => x.ToList());
         }
     }
 }
