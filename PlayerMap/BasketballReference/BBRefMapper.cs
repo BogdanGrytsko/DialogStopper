@@ -41,53 +41,49 @@ namespace PlayerMap.BasketballReference
             }
             if (!possiblePlayers.Any())
             {
-                pc.Comment = "No players found for given league+season+team";
+                pc.MongoPlayer = new RatedMongoPlayer { Comment = "No players found for given league+season+team" };
                 return;
             }
 
             var fuzzRated = GetFuzzRating(possiblePlayers, pc.BBRefPlayer).OrderByDescending(x => x.Item2).ToList();
-            var (mongoPlayerId, rating) = GetPlayerId(fuzzRated, pc.BBRefPlayer.Number, out var comment);
-            pc.Comment = comment;
-            pc.MongoPlayerId = mongoPlayerId;
-            pc.NameRating = rating;
+            var ratedPlayer = GetRatedPlayer(fuzzRated, pc.BBRefPlayer.Number);
+            pc.MongoPlayer = ratedPlayer;
         }
 
-        private static (string, int) GetPlayerId(List<(MongoPlayerDto player, int rating)> fuzzRated, int number, out string comment)
+        private static RatedMongoPlayer GetRatedPlayer(List<(MongoPlayerDto player, int rating)> fuzzRated, int number)
         {
             var byName = fuzzRated.Where(x => x.Item2 >= MinRating).ToList();
             if (byName.Any())
             {
                 var byNameAndNumber = byName.Where(x => x.player.Number == number).ToList();
-                if (byNameAndNumber.Count == 1)
+                if (byNameAndNumber.Count >= 1)
                 {
-                    comment = "Strong match by both name and number";
-                    return GetRatedPlayer(byNameAndNumber);
+                    return RatePlayer(byNameAndNumber, "Match by name and number");
                 }
-                if (byNameAndNumber.Count > 1)
+                if (byName.Count >= 1)
                 {
-                    comment = "Multi match by both name and number. Use events to refine";
-                    return GetRatedPlayer(byNameAndNumber);
-                }
-                //only name
-                if (byName.Count == 1)
-                {
-                    comment = "Match only by name";
-                    return GetRatedPlayer(byName);
-                }
-                else
-                {
-                    comment = "Multi match only by name. Use events to refine";     
-                    return GetRatedPlayer(byName);
+                    return RatePlayer(byName, "Match by name only");
                 }
             }
 
-            comment = "No players found by name";
-            return (null, 0);
+            return new RatedMongoPlayer { Comment = "No players found by name"};
         }
 
-        private static (string, int) GetRatedPlayer(List<(MongoPlayerDto player, int rating)> players)
+        private static RatedMongoPlayer RatePlayer(List<(MongoPlayerDto player, int rating)> players, string comment)
         {
-            return (string.Join(";", players.Select(x => x.player.Id).ToArray()), players.First().rating);
+            if (players.Count > 1)
+                comment = $"Multi {comment}. Use events to refine";
+            return GetRatedPlayer(players, comment);
+        }
+
+        private static RatedMongoPlayer GetRatedPlayer(List<(MongoPlayerDto player, int rating)> players, string comment)
+        {
+            return new RatedMongoPlayer
+            {
+                MongoPlayerId = string.Join(";", players.Select(x => x.player.Id).ToArray()),
+                Comment = comment,
+                Rating = players.First().rating
+            };
         }
 
         private static IEnumerable<(MongoPlayerDto, int)> GetFuzzRating(List<MongoPlayerDto> possiblePlayers, BBRefPlayer bbRefPlayer)
