@@ -5,5 +5,6 @@
         public string Comment { get; set; }
         public BBRefPlayer BBRefPlayer { get; set; }
         public string MongoPlayerId { get; set; }
+        public int NameRating { get; set; }
     }
 }

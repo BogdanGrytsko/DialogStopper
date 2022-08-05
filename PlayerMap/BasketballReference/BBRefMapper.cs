@@ -10,6 +10,7 @@ namespace PlayerMap.BasketballReference
     public class BBRefMapper
     {
         private const string NBA = "54457dce300969b132fcfb34", WNBA = "54457dce300969b132fcfb35";
+        private const int MinRating = 95;
         
         public async Task Map()
         {
@@ -34,57 +35,67 @@ namespace PlayerMap.BasketballReference
 
         private static void Map(PlayerCareer pc, List<MongoPlayerDto> possiblePlayers)
         {
+            if (pc.BBRefPlayer.Url == "/players/w/welscji01.html")
+            {
+                
+            }
             if (!possiblePlayers.Any())
             {
                 pc.Comment = "No players found for given league+season+team";
                 return;
             }
 
-            //algo change : team + name. If number = single = good match. Flag if multi. If 
-            var byName = GetByNameMatch(possiblePlayers, pc.BBRefPlayer).ToList();
-            var mongoPlayerId = GetPlayerId(byName, pc.BBRefPlayer.Number, out var comment);
+            var fuzzRated = GetFuzzRating(possiblePlayers, pc.BBRefPlayer).OrderByDescending(x => x.Item2).ToList();
+            var (mongoPlayerId, rating) = GetPlayerId(fuzzRated, pc.BBRefPlayer.Number, out var comment);
             pc.Comment = comment;
             pc.MongoPlayerId = mongoPlayerId;
+            pc.NameRating = rating;
         }
 
-        private static string GetPlayerId(List<MongoPlayerDto> byName, int number, out string comment)
+        private static (string, int) GetPlayerId(List<(MongoPlayerDto player, int rating)> fuzzRated, int number, out string comment)
         {
+            var byName = fuzzRated.Where(x => x.Item2 >= MinRating).ToList();
             if (byName.Any())
             {
-                var byNameAndNumber = byName.Where(x => x.Number == number).ToList();
+                var byNameAndNumber = byName.Where(x => x.player.Number == number).ToList();
                 if (byNameAndNumber.Count == 1)
                 {
                     comment = "Strong match by both name and number";
-                    return byNameAndNumber.Single().Id;
+                    return GetRatedPlayer(byNameAndNumber);
                 }
                 if (byNameAndNumber.Count > 1)
                 {
                     comment = "Multi match by both name and number. Use events to refine";
-                    return string.Join(";", byNameAndNumber.Select(x => x.Id).ToArray());
+                    return GetRatedPlayer(byNameAndNumber);
                 }
                 //only name
                 if (byName.Count == 1)
                 {
                     comment = "Match only by name";
-                    return byName.Single().Id;
+                    return GetRatedPlayer(byName);
                 }
                 else
                 {
                     comment = "Multi match only by name. Use events to refine";     
-                    return string.Join(";", byName.Select(x => x.Id).ToArray());
+                    return GetRatedPlayer(byName);
                 }
             }
 
             comment = "No players found by name";
-            return null;
+            return (null, 0);
         }
 
-        private static IEnumerable<MongoPlayerDto> GetByNameMatch(List<MongoPlayerDto> possiblePlayers, BBRefPlayer bbRefPlayer)
+        private static (string, int) GetRatedPlayer(List<(MongoPlayerDto player, int rating)> players)
+        {
+            return (string.Join(";", players.Select(x => x.player.Id).ToArray()), players.First().rating);
+        }
+
+        private static IEnumerable<(MongoPlayerDto, int)> GetFuzzRating(List<MongoPlayerDto> possiblePlayers, BBRefPlayer bbRefPlayer)
         {
             foreach (var possiblePlayer in possiblePlayers)
             {
-                if (Fuzz.Ratio(PrepareName(possiblePlayer.Name), PrepareName(bbRefPlayer.Name)) >= 95)
-                    yield return possiblePlayer;
+                var fuzzRatio = Fuzz.Ratio(PrepareName(possiblePlayer.Name), PrepareName(bbRefPlayer.Name));
+                yield return (possiblePlayer, fuzzRatio);
             }
         }
 
