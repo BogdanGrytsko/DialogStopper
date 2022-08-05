@@ -36,10 +36,6 @@ namespace PlayerMap.BasketballReference
 
         private static void Map(PlayerCareer pc, List<MongoPlayerDto> possiblePlayers)
         {
-            if (pc.BBRefPlayer.Url == "/players/w/welscji01.html")
-            {
-                
-            }
             if (!possiblePlayers.Any())
             {
                 pc.MongoPlayer = new RatedMongoPlayer { Comment = "No players found for given league+season+team" };
