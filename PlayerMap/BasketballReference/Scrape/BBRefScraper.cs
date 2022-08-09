@@ -8,11 +8,11 @@ using DialogStopper.Storage;
 using HtmlAgilityPack;
 using PlayerMap.BasketballReference.Model;
 
-namespace PlayerMap.BasketballReference
+namespace PlayerMap.BasketballReference.Scrape
 {
     public class BBRefScraper
     {
-        public async Task DoWork()
+        public async Task Scrape()
         {
             var teamsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Team ID Mapping.csv");

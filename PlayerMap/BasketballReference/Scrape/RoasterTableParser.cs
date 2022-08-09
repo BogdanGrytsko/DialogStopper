@@ -3,7 +3,7 @@ using System.Linq;
 using HtmlAgilityPack;
 using PlayerMap.BasketballReference.Model;
 
-namespace PlayerMap.BasketballReference
+namespace PlayerMap.BasketballReference.Scrape
 {
     public class RoasterTableParser
     {
@@ -32,17 +32,17 @@ namespace PlayerMap.BasketballReference
             return bbRefPlayer;
         }
 
-        private static string GetText(HtmlNode row, string name)
+        public static string GetText(HtmlNode row, string name)
         {
             return row.SelectNodes(Column(name))?.FirstOrDefault()?.InnerText;
         }
 
-        private static string ColumnA(string name)
+        public static string ColumnA(string name)
         {
             return $"{Column(name)}//a";
         }
         
-        private static string Column(string name)
+        public static string Column(string name)
         {
             return $"td[@data-stat='{name}']";
         }
