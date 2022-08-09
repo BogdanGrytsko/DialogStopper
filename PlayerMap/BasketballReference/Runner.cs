@@ -8,7 +8,7 @@ namespace PlayerMap.BasketballReference
         [Fact]
         public async Task Scrape()
         {
-            await new Scraper().DoWork();
+            await new BBRefScraper().DoWork();
         }
 
         [Fact]

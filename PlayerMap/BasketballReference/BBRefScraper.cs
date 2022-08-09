@@ -10,7 +10,7 @@ using PlayerMap.BasketballReference.Model;
 
 namespace PlayerMap.BasketballReference
 {
-    public class Scraper
+    public class BBRefScraper
     {
         public async Task DoWork()
         {
