@@ -47,6 +47,9 @@ namespace PlayerMap.BasketballReference.Scrape
                Height = GetText(row, "height"),
                Weight = GetText(row, "weight"),
                BirthCountry = GetText(row, "hometown"),
+               RSCITop100 = GetText(row, "rsci"),
+               Summary = GetText(row, "summary"),
+               Class = GetText(row, "class"),
             };
             if (int.TryParse(number, out var numberInt))
                 bbRefPlayer.Number = numberInt;
