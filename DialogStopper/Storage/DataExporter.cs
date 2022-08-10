@@ -27,5 +27,9 @@ namespace DialogStopper.Storage
             csv.Context.RegisterClassMap<TMap>();
             csv.WriteRecords(data);
         }
+        public static byte[] Import(string path)
+        {
+            return  File.ReadAllBytes(path);
+        }
     }
 }
