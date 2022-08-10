@@ -34,8 +34,6 @@ namespace PlayerMap.BasketballReference.Scrape
             var seasonsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Season ID.csv");
             var seasons = new DataImporter<SeasonDto, SeasonDtoMap>().LoadData(seasonsData, ";");
-            
-
             foreach (var season in seasons)
             {
                 for (int i = 0; i < teams.Count; i = i + 100)
@@ -58,6 +56,8 @@ namespace PlayerMap.BasketballReference.Scrape
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
             if (PageNotFound(doc))
                 return;
+            if (TableNotExist(doc))
+                return;
             //skip headers
             var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
             foreach (var row in rows)
@@ -76,6 +76,10 @@ namespace PlayerMap.BasketballReference.Scrape
             var h1 = doc.DocumentNode.SelectNodes(@"//h1");
             return h1 != null && h1.First().InnerText
                 .Equals("Page Not Found (404 error)", StringComparison.OrdinalIgnoreCase);
+        }
+        private static bool TableNotExist(HtmlDocument doc)
+        {
+            return doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr") == null;
         }
     }
 }
