@@ -29,35 +29,40 @@ namespace PlayerMap.BasketballReference.Scrape
         
         public async Task Scrape()
         {
-            var teamsData = Helper.GetResource(
-                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Team ID Mapping.csv");
-            var teams = new DataImporter<TeamDto, TeamDtoMap>().LoadData(teamsData, ";");
+            var teamsData = DataExporter.Import(@"C:\temp\Sportradar\SRefTeams.csv");
+            var teams = new DataImporter<TeamDto, TeamDtoSRefMap>().LoadData(teamsData, ";");
             var seasonsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Season ID.csv");
             var seasons = new DataImporter<SeasonDto, SeasonDtoMap>().LoadData(seasonsData, ";");
-            
-            var players = new List<BBRefPlayer>();
             foreach (var season in seasons)
             {
-                foreach (var team in teams)
+                for (int i = 0; i < teams.Count; i = i + 100)
                 {
-                    await Scrape(season, team, players);
+                    var players = new List<BBRefPlayer>();
+                    var items = teams.Skip(i).Take(100);
+                    foreach (var team in items)
+                    {
+                       await Scrape(season, team, players);
+                    }
+                    DataExporter.Export(players, $@"C:\temp\Sportradar\SRefPlayers_{i}-{i+100}Teams-{season.BBRefSeasonName}.csv");
+
                 }
             }
-            DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers.csv");
         }
 
         private static async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers)
         {
-            var url = $@"https://www.basketball-reference.com/teams/{team.BBRefTeamId}/{season.BBRefSeasonId}.html";
+            var url = $@"https://www.sports-reference.com{team.BBRefTeamId}{season.BBRefSeasonId}.html";
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
             if (PageNotFound(doc))
+                return;
+            if (TableNotExist(doc))
                 return;
             //skip headers
             var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
             foreach (var row in rows)
             {
-                var player = RoasterTableParser.GetPlayer(row);
+                var player = RoasterTableParser.GetSRefPlayer(row);
                 player.TeamName = team.TeamName;
                 player.MongoTeamId = team.MongoTeamId;
                 player.SeasonName = season.BBRefSeasonName;
@@ -71,6 +76,10 @@ namespace PlayerMap.BasketballReference.Scrape
             var h1 = doc.DocumentNode.SelectNodes(@"//h1");
             return h1 != null && h1.First().InnerText
                 .Equals("Page Not Found (404 error)", StringComparison.OrdinalIgnoreCase);
+        }
+        private static bool TableNotExist(HtmlDocument doc)
+        {
+            return doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr") == null;
         }
     }
 }
