@@ -51,7 +51,7 @@ namespace PlayerMap.BasketballReference.Scrape
             }
         }
 
-        private static bool PageNotFound(HtmlDocument doc)
+        public static bool PageNotFound(HtmlDocument doc)
         {
             var h1 = doc.DocumentNode.SelectNodes(@"//h1");
             return h1 != null && h1.First().InnerText
