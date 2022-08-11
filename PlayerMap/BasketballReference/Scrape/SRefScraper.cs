@@ -34,18 +34,20 @@ namespace PlayerMap.BasketballReference.Scrape
             var seasonsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Season ID.csv");
             var seasons = new DataImporter<SeasonDto, SeasonDtoMap>().LoadData(seasonsData, ";");
+            var batchSize = 100;
             foreach (var season in seasons)
             {
-                for (int i = 0; i < teams.Count; i = i + 100)
+                for (int i = 0; i < teams.Count; i = i + batchSize)
                 {
                     var players = new List<BBRefPlayer>();
-                    var items = teams.Skip(i).Take(100);
+                    var items = teams.Skip(i).Take(batchSize);
                     foreach (var team in items)
                     {
-                       await Scrape(season, team, players);
+                        await Scrape(season, team, players);
                     }
-                    DataExporter.Export(players, $@"C:\temp\Sportradar\SRefPlayers_{i}-{i+100}Teams-{season.BBRefSeasonName}.csv");
 
+                    DataExporter.Export(players,
+                        $@"C:\temp\Sportradar\SRefPlayers_{i}-{i + batchSize}Teams-{season.BBRefSeasonName}.csv");
                 }
             }
         }
@@ -56,10 +58,11 @@ namespace PlayerMap.BasketballReference.Scrape
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
             if (PageNotFound(doc))
                 return;
-            if (TableNotExist(doc))
+            var table = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr");
+            if (table == null)
                 return;
             //skip headers
-            var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
+            var rows = table.Skip(1);
             foreach (var row in rows)
             {
                 var player = RoasterTableParser.GetSRefPlayer(row);
@@ -76,10 +79,6 @@ namespace PlayerMap.BasketballReference.Scrape
             var h1 = doc.DocumentNode.SelectNodes(@"//h1");
             return h1 != null && h1.First().InnerText
                 .Equals("Page Not Found (404 error)", StringComparison.OrdinalIgnoreCase);
-        }
-        private static bool TableNotExist(HtmlDocument doc)
-        {
-            return doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr") == null;
         }
     }
 }
