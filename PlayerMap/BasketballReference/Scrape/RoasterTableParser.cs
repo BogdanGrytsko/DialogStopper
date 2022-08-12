@@ -50,6 +50,7 @@ namespace PlayerMap.BasketballReference.Scrape
                RSCITop100 = GetText(row, "rsci"),
                Summary = GetText(row, "summary"),
                Class = GetText(row, "class"),
+               IsNBA = row.SelectNodes("th[@class='left sr_nba']")?.FirstOrDefault() != null,
             };
             if (int.TryParse(number, out var numberInt))
                 bbRefPlayer.Number = numberInt;

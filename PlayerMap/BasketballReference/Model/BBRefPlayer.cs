@@ -16,7 +16,7 @@ namespace PlayerMap.BasketballReference.Model
         public string College { get; set; }
         public string CollegeUrl { get; set; }
         public string Class { get; set; }
-
+        public bool IsNBA { get; set; }
 
 
         public string TeamName { get; set; }

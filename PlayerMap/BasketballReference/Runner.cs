@@ -25,9 +25,14 @@ namespace PlayerMap.BasketballReference
         }
         
         [Fact]
+        public async Task ScrapeSRefTeamBBRefSeasons()
+        {
+            await new SRefScraper().ScrapeSRefTeamBBRefSeasons();
+        }
+        [Fact]
         public async Task ScrapeSRef()
         {
-            await new SRefScraper().Scrape();
+            await new SRefScraper().ScrapeSRefToMongoTeamSRefToMongoSeasons();
         }
     }
 }
