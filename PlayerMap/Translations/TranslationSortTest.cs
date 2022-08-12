@@ -10,13 +10,18 @@ namespace PlayerMap.Translations
     public class TranslationSortTest
     {
         [Fact]
-        public void SortTranslations()
+        public void OutputTemplatedFiles()
         {
-            var path = @"Translations\\Translations.csv";
+            var startIndex = 4;
+            var shouldPascalCase = false;
+            var path = @"Translations\\Metrics missing.csv";
+            GenerateTemplatedTranslations(path, startIndex, shouldPascalCase);
+        }
+
+        private static void GenerateTemplatedTranslations(string path, int startIndex, bool shouldPascalCase)
+        {
             var lines = File.ReadAllLines(path);
-            var result = lines.Skip(1).OrderBy(x => x.Split(";").First()).ToList();
-            result = new List<string> { lines.First() }.Concat(result).ToList();
-            File.WriteAllLines(@"Translations\\Translations_Sorted.csv", result, Encoding.UTF8);
+            SortTranslations(lines);
 
             var template = File.ReadAllText(@"Translations\\template.txt");
             var languageMap = new Dictionary<int, string>();
@@ -26,9 +31,11 @@ namespace PlayerMap.Translations
             {
                 var line = lines[i];
                 var words = line.Split(";");
+                if (words.All(string.IsNullOrEmpty))
+                    continue;
                 if (i == 0)
                 {
-                    for (int j = 0; j < words.Length; j++)
+                    for (int j = startIndex; j < words.Length; j++)
                     {
                         var language = words[j];
                         languageMap.Add(j, language);
@@ -36,10 +43,15 @@ namespace PlayerMap.Translations
                     }
                     continue;
                 }
-                
-                var baseWord = words.First().ToPascalCase();
-                baseWord = baseWord.Replace("(%)", string.Empty);;
-                for (int j = 1; j < words.Length; j++)
+
+                var baseWord = words[startIndex - 1];
+                if (shouldPascalCase)
+                {
+                    baseWord = baseWord.ToPascalCase();
+                    baseWord = baseWord.Replace("(%)", string.Empty);
+                }
+
+                for (int j = startIndex; j < words.Length; j++)
                 {
                     var word = words[j];
                     var replaced = template.Replace("{name}", baseWord).Replace("{value}", word);
@@ -52,6 +64,13 @@ namespace PlayerMap.Translations
                 var concat = string.Join(Environment.NewLine, replaced.Value);
                 File.WriteAllText(@"Translations\\" + replaced.Key + ".txt", concat);
             }
+        }
+
+        private static void SortTranslations(string[] lines)
+        {
+            var result = lines.Skip(1).OrderBy(x => x.Split(";").First()).ToList();
+            result = new List<string> { lines.First() }.Concat(result).ToList();
+            File.WriteAllLines(@"Translations\\Translations_Sorted.csv", result, Encoding.UTF8);
         }
     }
 }
