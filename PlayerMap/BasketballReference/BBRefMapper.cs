@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DialogStopper.Storage;
-using FuzzySharp;
 using PlayerMap.BasketballReference.Model;
 
 namespace PlayerMap.BasketballReference
@@ -34,7 +33,7 @@ namespace PlayerMap.BasketballReference
                 }
             }
             
-            DataExporter.Export(playerCareers, @"C:\temp\Sportradar\PlayerCareers.csv");
+            DataExporter.Export(playerCareers, @"C:\temp\Sportradar\PlayerCareersNBA.csv");
         }
 
         private static Dictionary<string, List<MongoPlayerDto>> GetMongoPlayerMap(List<MongoPlayerDto> leaguePlayers)
