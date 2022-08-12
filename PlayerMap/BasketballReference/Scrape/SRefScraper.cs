@@ -26,7 +26,7 @@ namespace PlayerMap.BasketballReference.Scrape
             DataExporter.Export(teams, @"C:\temp\Sportradar\SRefTeams.csv", ";");
         }
         
-        public async Task ScrapeSRefTeamBBRefSeasons()
+        public async Task ScrapeSRefTeamBBRefSeasonsBatchSize()
         {
             var teams = await GetSRefTeams();
             var seasons = await GetBBRefToMongoSeasons();
@@ -44,11 +44,11 @@ namespace PlayerMap.BasketballReference.Scrape
                     }
 
                     DataExporter.Export(players,
-                        $@"C:\temp\Sportradar\SRefPlayers_{i}-{i + batchSize}Teams-{season.BBRefSeasonName}.csv");
+                        $@"C:\temp\Sportradar\CMTeamsRef\SRefPlayers_{i}-{i + batchSize}Teams-{season.BBRefSeasonName}.csv");
                 }
             }
         }
-        public async Task ScrapeSRefToMongoTeamSRefToMongoSeasons()
+        public async Task ScrapeSRefToMongoTeamSRefToMongoSeasonsBatchSize()
         {
             var teams = await GetSRefToMongoTeams();
             var seasons = await GetSRefToMongoSeasons();
@@ -66,9 +66,24 @@ namespace PlayerMap.BasketballReference.Scrape
                     }
 
                     DataExporter.Export(players,
-                        $@"C:\temp\Sportradar\NBASref\SRefPlayers_{i}-{i + batchSize}Teams-{season.BBRefSeasonName}.csv");
+                        $@"C:\temp\Sportradar\CMRef\SRefPlayers_{i}-{i + batchSize}Teams-{season.BBRefSeasonName}.csv");
                 }
             }
+        }
+        public async Task ScrapeSRefToMongoTeamSRefToMongoSeasons()
+        {
+            var teams = await GetSRefToMongoTeams();
+            var seasons = await GetSRefToMongoSeasons();
+            var players = new List<BBRefPlayer>();
+            foreach (var season in seasons)
+            {
+                    foreach (var team in teams)
+                    {
+                        var url = $@"https://www.sports-reference.com/cbb/schools/{team.BBRefTeamId}/{season.BBRefSeasonId}.html";
+                        await Scrape(season, team, players, url);
+                    }
+            }
+        DataExporter.Export(players,$@"C:\temp\Sportradar\AllSRefPlayers.csv");
         }
         private static async Task<List<TeamDto>> GetSRefTeams()
         {
@@ -84,14 +99,14 @@ namespace PlayerMap.BasketballReference.Scrape
         private static async Task<List<TeamDto>> GetSRefToMongoTeams()
         {
             var teamsData = Helper.GetResource(
-                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBASRef.SRef to Mongo Team Mapping.csv");
-            return new DataImporter<TeamDto, TeamDtoSRefToMongoMap>().LoadData(teamsData, ",");
+                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.CMRef.SRef to Mongo Team Mapping.csv");
+            return new DataImporter<TeamDto, TeamDtoSRefToMongoMap>().LoadData(teamsData, ";");
         }
         private static async Task<List<SeasonDto>> GetSRefToMongoSeasons()
         {
             var seasonsData = Helper.GetResource(
-                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBASRef.SRef to Mongo Season ID Mapping.csv");
-            return new DataImporter<SeasonDto, SeasonDtoSRefToMongoMap>().LoadData(seasonsData, ",");
+                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.CMRef.SRef to Mongo Season ID Mapping.csv");
+            return new DataImporter<SeasonDto, SeasonDtoSRefToMongoMap>().LoadData(seasonsData, ";");
         }
 
         private static async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers, string url)

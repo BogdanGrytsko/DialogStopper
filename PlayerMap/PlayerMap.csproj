@@ -34,11 +34,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="BasketballReference\NBASRef\" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <None Remove="BasketballReference\CMRef\SRef to Mongo Season ID Mapping.csv" />
+      <None Remove="BasketballReference\CMRef\SRef to Mongo Team Mapping.csv" />
       <None Remove="BasketballReference\NBA\BBRef to Mongo Team ID Mapping.csv" />
+      <EmbeddedResource Include="BasketballReference\CMRef\SRef to Mongo Season ID Mapping.csv" />
+      <EmbeddedResource Include="BasketballReference\CMRef\SRef to Mongo Team Mapping.csv" />
       <EmbeddedResource Include="BasketballReference\NBA\BBRef to Mongo Team ID Mapping.csv" />
       <None Remove="BasketballReference\NBA\BBRef to Mongo Season ID.csv" />
       <EmbeddedResource Include="BasketballReference\NBA\BBRef to Mongo Season ID.csv" />

@@ -69,7 +69,7 @@ namespace PlayerMap.BasketballReference
 
         private RatedMongoPlayer RatePlayer(List<(MongoPlayerDto player, int rating)> players, string comment)
         {
-            if (players.Count > 1)
+            if (players.Count > 1 && possibleBoxScores != null)
             {
                 var playerIds = players.Select(x => x.player.Id).ToList();
                 var boxScored = possibleBoxScores.Where(x => playerIds.Contains(x.MongoPlayerId)).ToList();
