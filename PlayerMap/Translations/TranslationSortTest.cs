@@ -12,7 +12,7 @@ namespace PlayerMap.Translations
         [Fact]
         public void OutputTemplatedFiles()
         {
-            var startIndex = 4;
+            var startIndex = 3;
             var shouldPascalCase = false;
             var path = @"Translations\\Metrics missing.csv";
             GenerateTemplatedTranslations(path, startIndex, shouldPascalCase);
@@ -44,7 +44,7 @@ namespace PlayerMap.Translations
                     continue;
                 }
 
-                var baseWord = words[startIndex - 1];
+                var baseWord = words[startIndex];
                 if (shouldPascalCase)
                 {
                     baseWord = baseWord.ToPascalCase();
