@@ -15,15 +15,13 @@ namespace PlayerMap.BasketballReference
             var playerCareersNBA = await GetPlayerCareersNBA(@"C:\temp\Sportradar\PlayerCareersNBA.csv");
             var playerCareersCMRef = await GetPlayerCareersCMRef(@"C:\temp\Sportradar\PlayerCareersCMRef.csv");
             var mapNBAToColleges = new List<PlayerCareer>();
-            mapNBAToColleges.AddRange(playerCareersNBA);
             var playerCareersNBAGroup = playerCareersNBA.GroupBy(x => x.BBRefPlayer.Name).ToList();
             foreach (var playerCareer in playerCareersNBAGroup)
             {
                 if (playerCareersCMRef.Contains(playerCareer.Key))
-                    mapNBAToColleges.AddRange(playerCareersCMRef[playerCareer.Key].ToList());
+                    playerCareersNBA.AddRange(playerCareersCMRef[playerCareer.Key].ToList());
             }
-            var m = mapNBAToColleges.GroupBy(x => x.BBRefPlayer.Name).ToList();
-            mapNBAToColleges = new List<PlayerCareer>();
+            var m = playerCareersNBA.GroupBy(x => x.BBRefPlayer.Name).ToList();
             foreach (var playerCareer in m)
             {
                 mapNBAToColleges.AddRange(playerCareer);
@@ -43,3 +41,4 @@ namespace PlayerMap.BasketballReference
         }
     }
 }
+
