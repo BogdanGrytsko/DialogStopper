@@ -47,5 +47,10 @@ namespace PlayerMap.BasketballReference
         {
             await new SRefScraper().ScrapeSRefToMongoTeamSRefToMongoSeasons();
         }
+        [Fact]
+        public async Task MapNBAToCollege()
+        {
+            await new MapNBAToCollege().Map();
+        }
     }
 }
