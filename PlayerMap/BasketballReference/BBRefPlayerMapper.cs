@@ -92,7 +92,8 @@ namespace PlayerMap.BasketballReference
             {
                 MongoPlayerId = string.Join(";", players.Select(x => x.player.Id).ToArray()),
                 Comment = comment,
-                Rating = players.First().rating
+                Rating = players.First().rating,
+                SynergyPlayerName = players.First().player.Name,
             };
         }
 

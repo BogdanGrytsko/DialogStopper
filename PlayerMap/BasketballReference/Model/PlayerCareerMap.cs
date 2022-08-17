@@ -6,11 +6,10 @@ namespace PlayerMap.BasketballReference.Model
     {
         public PlayerCareerMap()
         {
-            //Map(x => x.MongoPlayer).Name("MongoPlayer");
-            //Map(x => x.BBRefPlayer).Name("BBRefPlayer");
             Map(x => x.MongoPlayer.MongoPlayerId).Name("MongoPlayerId");
             Map(x => x.MongoPlayer.Comment).Name("Comment");
             Map(x => x.MongoPlayer.Rating).Name("Rating");
+            Map(x => x.MongoPlayer.SynergyPlayerName).Name("SynergyPlayerName").Optional();
             Map(x => x.BBRefPlayer.Number).Name("Number");
             Map(x => x.BBRefPlayer.Name).Name("Name");
             Map(x => x.BBRefPlayer.Url).Name("Url");
@@ -26,6 +25,7 @@ namespace PlayerMap.BasketballReference.Model
             Map(x => x.BBRefPlayer.IsNBA).Name("IsNBA").Optional();
             Map(x => x.BBRefPlayer.RSCITop100).Name("RSCITop100").Optional();
             Map(x => x.BBRefPlayer.Summary).Name("Summary").Optional();
+
 
             Map(x => x.BBRefPlayer.TeamName).Name("TeamName");
             Map(x => x.BBRefPlayer.MongoTeamId).Name("MongoTeamId");
