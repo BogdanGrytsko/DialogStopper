@@ -40,7 +40,7 @@ namespace DialogStopper
                     }
                 }
 
-                if (c.Key is ConsoleKey.F or ConsoleKey.J)
+                if (char.ToLower(c.KeyChar) is 'f' or 'j' or 'а' or 'о')
                 {
                     points.Add((time, PointType.ContinuousSegment));
                 }
