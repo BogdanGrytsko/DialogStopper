@@ -12,16 +12,16 @@ namespace PlayerMap.Translations
         [Fact]
         public void OutputTemplatedFiles()
         {
-            var startIndex = 3;
+            var startIndex = 1;
             var shouldPascalCase = false;
-            var path = @"Translations\\Metrics missing.csv";
-            GenerateTemplatedTranslations(path, startIndex, shouldPascalCase);
+            var inputPath = @"Translations\\CarbonThemeTranslations.csv";
+            GenerateTemplatedTranslations(inputPath, startIndex, shouldPascalCase);
         }
 
-        private static void GenerateTemplatedTranslations(string path, int startIndex, bool shouldPascalCase)
+        private static void GenerateTemplatedTranslations(string path, int startIndex, bool shouldPascalCase, string separator = ";")
         {
             var lines = File.ReadAllLines(path);
-            SortTranslations(lines);
+            SortTranslations(lines, separator);
 
             var template = File.ReadAllText(@"Translations\\template.txt");
             var languageMap = new Dictionary<int, string>();
@@ -30,7 +30,7 @@ namespace PlayerMap.Translations
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                var words = line.Split(";");
+                var words = line.Split(separator);
                 if (words.All(string.IsNullOrEmpty))
                     continue;
                 if (i == 0)
@@ -66,9 +66,9 @@ namespace PlayerMap.Translations
             }
         }
 
-        private static void SortTranslations(string[] lines)
+        private static void SortTranslations(string[] lines, string separator)
         {
-            var result = lines.Skip(1).OrderBy(x => x.Split(";").First()).ToList();
+            var result = lines.Skip(1).OrderBy(x => x.Split(separator).First()).ToList();
             result = new List<string> { lines.First() }.Concat(result).ToList();
             File.WriteAllLines(@"Translations\\Translations_Sorted.csv", result, Encoding.UTF8);
         }
