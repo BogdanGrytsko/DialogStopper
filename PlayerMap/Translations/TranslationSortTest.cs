@@ -15,10 +15,34 @@ namespace PlayerMap.Translations
             var startIndex = 1;
             var shouldPascalCase = false;
             var inputPath = @"Translations\\CarbonThemeTranslations.csv";
-            GenerateTemplatedTranslations(inputPath, startIndex, shouldPascalCase);
+            var updatePathTemplate =
+                @"C:\Work\Repos\Ecovadis\EcovadisApp\Anakin.Spreadsheets\Resources\Cap\Client\ClientCorrectiveActionRecordResource.{0}.resx";
+            var map = GenerateTemplatedTranslations(inputPath, startIndex, shouldPascalCase);
+            SaveToFiles(map);
+            PerformUpdate(map, updatePathTemplate);
         }
 
-        private static void GenerateTemplatedTranslations(string path, int startIndex, bool shouldPascalCase, string separator = ";")
+        private static void PerformUpdate(Dictionary<string,List<string>> map, string updatePathTemplate)
+        {
+            foreach (var entry in map)
+            {
+                var filePath = string.Format(updatePathTemplate, entry.Key.ToLower());
+                if (entry.Key.ToLower() == "en")
+                    filePath = filePath.Replace(".en", string.Empty);
+                if (!File.Exists(filePath)) continue;
+
+                var data = File.ReadAllText(filePath);
+                //already updated
+                if (data.Contains(entry.Value.First())) continue;
+
+                var toAdd = string.Join(Environment.NewLine, entry.Value);
+                const string endRoot = "</root>";
+                data = data.Replace(endRoot, toAdd + Environment.NewLine + endRoot);
+                File.WriteAllText(filePath, data);
+            }
+        }
+
+        private static Dictionary<string, List<string>> GenerateTemplatedTranslations(string path, int startIndex, bool shouldPascalCase, string separator = ";")
         {
             var lines = File.ReadAllLines(path);
             SortTranslations(lines, separator);
@@ -59,6 +83,11 @@ namespace PlayerMap.Translations
                 }
             }
 
+            return resultMap;
+        }
+
+        private static void SaveToFiles(Dictionary<string, List<string>> resultMap)
+        {
             foreach (var replaced in resultMap)
             {
                 var concat = string.Join(Environment.NewLine, replaced.Value);
