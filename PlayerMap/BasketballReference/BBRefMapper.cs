@@ -37,6 +37,11 @@ namespace PlayerMap.BasketballReference
 
             DataExporter.Export(playerCareers, @$"C:\temp\Sportradar\{fileName}.csv");
         }
+        public async Task RewriteCMRef(string fileNamePath, string fileName)
+        {
+            var playerCareers = new DataImporter<PlayerCareer, PlayerCareerMap>().LoadData(fileNamePath, ";").ToList();
+            DataExporter.Export(playerCareers, @$"C:\temp\Sportradar\{fileName}.csv", ",");
+        }
 
         private static Dictionary<string, List<MongoPlayerDto>> GetMongoPlayerMap(List<MongoPlayerDto> leaguePlayers)
         {

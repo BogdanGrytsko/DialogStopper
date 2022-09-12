@@ -30,6 +30,13 @@ namespace PlayerMap.BasketballReference
             var fileName = "PlayerCareersCMRef";
             await new BBRefMapper().Map(scrapedPlayersPath, mongoPlayersPath, boxScoresPath, fileName);
         }
+        [Fact]
+        public async Task RewriteCMRef()
+        {
+            var fileNamePath = @"C:\temp\Sportradar\PlayerCareersCMRef.csv";
+            var fileName = "PlayerCareersCMRefNew";
+            await new BBRefMapper().RewriteCMRef(fileNamePath, fileName);
+        }
 
         [Fact]
         public async Task ScrapeSRefTeams()
