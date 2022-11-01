@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,8 +21,6 @@ namespace PlayerMap
             await File.WriteAllTextAsync(@"C:\temp\Sportradar\SituationsForEric.txt", string.Join(",", result));
         }
         
-
-
         public enum FiltrationPlayid : byte
         {
             [Display(Name = "0 Pts")] _0Pts, //0
