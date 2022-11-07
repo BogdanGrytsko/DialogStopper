@@ -17,7 +17,7 @@ namespace PsychologyCourseWork
             { "це на мене схоже", 5 },
             { "це точно про мене", 6 },
         };
-        private const int startIndex = 4, endIndex = startIndex + 101;
+        public const int StartIndex = 4, EndIndex = StartIndex + 101;
 
         private static readonly int[] adaptation = new[]
         {
@@ -86,11 +86,11 @@ namespace PsychologyCourseWork
 
         public SocialPsychologicalRogersDiamondMethod(string[] values, string[] headers)
         {
-            for (int i = startIndex; i < endIndex; i++)
+            for (int i = StartIndex; i < EndIndex; i++)
             {
                 var val = values[i];
                 var point = pointsMap[val];
-                result.Add(i - startIndex + 1, point);
+                result.Add(i - StartIndex + 1, point);
             }
 
             Adaptation = adaptation.Sum(x => result[x]);

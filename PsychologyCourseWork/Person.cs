@@ -8,5 +8,7 @@
         public string Qualification { get; init; }
         
         public SocialPsychologicalRogersDiamondMethod RogersDiamondMethod { get; init; }
+        public NeuroticAnxietyMethod NeuroticAnxietyMethod { get; init; }
+        public LifeEventsMethod LifeEventsMethod { get; init; }
     }
 }

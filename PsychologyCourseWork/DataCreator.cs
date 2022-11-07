@@ -11,6 +11,7 @@ namespace PsychologyCourseWork
     {
         public async Task Create()
         {
+            LifeEventsMethod.Load();
             var sep = '\t';
             var path = @"C:\temp\Опитувальник для магістерської дипломної роботи (Відповіді) (1) - Відповіді форми (1).tsv";
             var lines = await File.ReadAllLinesAsync(path);
@@ -33,7 +34,9 @@ namespace PsychologyCourseWork
                 Age = values[1],
                 Sex = values[2].Contains("Ж", StringComparison.OrdinalIgnoreCase) ? "Female" : "Male",
                 Qualification = values[3],
-                RogersDiamondMethod = new SocialPsychologicalRogersDiamondMethod(values, headers)
+                RogersDiamondMethod = new SocialPsychologicalRogersDiamondMethod(values, headers),
+                NeuroticAnxietyMethod = new NeuroticAnxietyMethod(values),
+                LifeEventsMethod = new LifeEventsMethod(values)
             };
             return person;
         }
