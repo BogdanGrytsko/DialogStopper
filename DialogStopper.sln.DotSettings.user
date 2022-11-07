@@ -10,7 +10,16 @@
   &lt;/Not&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c2bfe9a4_002D519b_002D47aa_002Dbb5d_002Dd13c3dd6b585/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TranslationSortTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::09818F5C-70BB-4126-9EC4-E0F0754C0AE0::net6.0::PlayerMap.Translations.TranslationSortTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::09818F5C-70BB-4126-9EC4-E0F0754C0AE0::net6.0::PlayerMap.Translations.TranslationSortTest&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::E7F456AB-D86F-4993-B2B2-2A4DED394DCF::net6.0::TraderTest.PsychologyWorkShould.CreateData&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;Not&gt;&#xD;
+      &lt;And&gt;&#xD;
+        &lt;Project Location="C:\Work\Repos\DialogStopper\DialogStopper\PlayerMap" Presentation="&amp;lt;PlayerMap&amp;gt;" /&gt;&#xD;
+        &lt;Namespace&gt;PlayerMap.Translations&lt;/Namespace&gt;&#xD;
+      &lt;/And&gt;&#xD;
+    &lt;/Not&gt;&#xD;
+  &lt;/And&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
