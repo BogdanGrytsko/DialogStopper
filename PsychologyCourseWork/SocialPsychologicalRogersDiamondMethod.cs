@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PsychologyCourseWork
@@ -7,7 +8,7 @@ namespace PsychologyCourseWork
     {
         private static readonly Dictionary<string, int> pointsMap = new()
         {
-            { "", -1000 },
+            { "", 3 },
             { "це до мене абсолютно не відноситься", 0 },
             { "сумніваюся, що це можна віднести до мене", 2 },
             { "не наважуюся віднести це до себе", 3 },
@@ -79,6 +80,10 @@ namespace PsychologyCourseWork
         
         private readonly Dictionary<int, int> result = new();
 
+        public SocialPsychologicalRogersDiamondMethod()
+        {
+        }
+
         public SocialPsychologicalRogersDiamondMethod(string[] values, string[] headers)
         {
             for (int i = startIndex; i < endIndex; i++)
@@ -102,6 +107,13 @@ namespace PsychologyCourseWork
             Domination = domination.Sum(x => result[x]);
             Submission = submission.Sum(x => result[x]);
             Escapism = escapism.Sum(x => result[x]);
+
+            AdaptationCalc = Math.Round((double)Adaptation / (Adaptation + DisAdaptation) * 100);
+            SelfAcceptanceCalc = Math.Round((double)SelfAcceptance / (SelfAcceptance + SelfDisAcceptance) * 100);
+            OthersAcceptanceCalc = Math.Round((double)OthersAcceptance * 1.2 / (OthersAcceptance * 1.2 + OthersDisAcceptance) * 100);
+            EmotionalComfortCalc = Math.Round((double)EmotionalComfort / (EmotionalComfort + EmotionalDisComfort) * 100);
+            InternalityCalc = Math.Round((double)InnerControl / (InnerControl + OuterControl * 1.4 ) * 100);
+            DominationCalc = Math.Round((double)Domination * 2 / (Domination * 2 + Submission) * 100);
         }
         
         public int Adaptation { get; init; }
@@ -118,5 +130,12 @@ namespace PsychologyCourseWork
         public int Domination { get; init; }
         public int Submission { get; init; }
         public int Escapism { get; init; }
+        
+        public double AdaptationCalc { get; init; }
+        public double SelfAcceptanceCalc { get; init; }
+        public double OthersAcceptanceCalc { get; init; }
+        public double EmotionalComfortCalc { get; init; }
+        public double InternalityCalc { get; init; }
+        public double DominationCalc { get; init; }
     }
 }
