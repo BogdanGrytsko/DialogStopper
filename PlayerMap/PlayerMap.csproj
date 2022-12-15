@@ -51,6 +51,14 @@
       <EmbeddedResource Include="BasketballReference\NBA\BBRef to Mongo Team ID Mapping.csv" />
       <None Remove="BasketballReference\NBA\BBRef to Mongo Season ID.csv" />
       <EmbeddedResource Include="BasketballReference\NBA\BBRef to Mongo Season ID.csv" />
+      <None Remove="BasketballReference\GLeague\G League - BBRef to Mongo Season ID.csv" />
+      <EmbeddedResource Include="BasketballReference\GLeague\G League - BBRef to Mongo Season ID.csv" />
+      <None Remove="BasketballReference\GLeague\G League - BBRef to Mongo Team ID Mapping.csv" />
+      <EmbeddedResource Include="BasketballReference\GLeague\G League - BBRef to Mongo Team ID Mapping.csv" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="BasketballReference\GLeague" />
     </ItemGroup>
 
 </Project>
