@@ -55,6 +55,8 @@
       <EmbeddedResource Include="BasketballReference\GLeague\G League - BBRef to Mongo Season ID.csv" />
       <None Remove="BasketballReference\GLeague\G League - BBRef to Mongo Team ID Mapping.csv" />
       <EmbeddedResource Include="BasketballReference\GLeague\G League - BBRef to Mongo Team ID Mapping.csv" />
+      <None Remove="BasketballReference\NBA\Additional BBREF NBA Season and Teams to Scrape.csv" />
+      <EmbeddedResource Include="BasketballReference\NBA\Additional BBREF NBA Season and Teams to Scrape.csv" />
     </ItemGroup>
 
     <ItemGroup>
