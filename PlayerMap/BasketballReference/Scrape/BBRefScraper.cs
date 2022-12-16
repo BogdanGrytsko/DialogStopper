@@ -15,7 +15,7 @@ namespace PlayerMap.BasketballReference.Scrape
         public async Task Scrape()
         {
             var teamsData = Helper.GetResource(
-                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Team ID Mapping.csv");
+                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.Additional BBREF NBA Season and Teams to Scrape.csv");
             var teams = new DataImporter<TeamDto, TeamDtoMap>().LoadData(teamsData, ";");
             var seasonsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Season ID.csv");
@@ -29,7 +29,7 @@ namespace PlayerMap.BasketballReference.Scrape
                     await Scrape(season, team, players);
                 }
             }
-            DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers.csv");
+            DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers Additional.csv");
         }
 
         private static async Task Scrape(SeasonDto season, TeamDto team, List<BBRefPlayer> bbRefPlayers)
@@ -38,6 +38,12 @@ namespace PlayerMap.BasketballReference.Scrape
             var doc = await new HtmlWeb().LoadFromWebAsync(url);
             if (PageNotFound(doc))
                 return;
+            if (doc.Text == "error code: 1015")
+            {
+                return;
+                throw new Exception("We have been blocked :(");
+            }
+                
             //skip headers
             var rows = doc.DocumentNode.SelectNodes(@"//table[@id='roster']//tr").Skip(1);
             foreach (var row in rows)
