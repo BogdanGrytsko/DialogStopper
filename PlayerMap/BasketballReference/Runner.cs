@@ -11,6 +11,12 @@ namespace PlayerMap.BasketballReference
         {
             await new BBRefScraper().Scrape();
         }
+        
+        [Fact]
+        public async Task ScrapeBBRefAdditional()
+        {
+            await new BBRefScraper().ScrapeAdditional();
+        }
 
         [Fact]
         public async Task Map()

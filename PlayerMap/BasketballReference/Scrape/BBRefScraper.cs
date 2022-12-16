@@ -15,7 +15,7 @@ namespace PlayerMap.BasketballReference.Scrape
         public async Task Scrape()
         {
             var teamsData = Helper.GetResource(
-                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.Additional BBREF NBA Season and Teams to Scrape.csv");
+                Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Team ID Mapping.csv");
             var teams = new DataImporter<TeamDto, TeamDtoMap>().LoadData(teamsData, ";");
             var seasonsData = Helper.GetResource(
                 Assembly.GetExecutingAssembly(), "PlayerMap.BasketballReference.NBA.BBRef to Mongo Season ID.csv");
@@ -29,6 +29,32 @@ namespace PlayerMap.BasketballReference.Scrape
                     await Scrape(season, team, players);
                 }
             }
+            DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers.csv");
+        }
+
+        public async Task ScrapeAdditional()
+        {
+            var teamsSeasonsData = Helper.GetResource(
+                Assembly.GetExecutingAssembly(),
+                "PlayerMap.BasketballReference.NBA.Additional BBREF NBA Season and Teams to Scrape.csv");
+            var teamSeasons = new DataImporter<TeamSeasonDto, TeamSeasonDtoMap>().LoadData(teamsSeasonsData, ";");
+
+            var players = new List<BBRefPlayer>();
+            foreach (var teamSeason in teamSeasons)
+            {
+                var season = new SeasonDto
+                {
+                    MongoSeasonId = teamSeason.SynergySeasonId, BBRefSeasonId = teamSeason.BBRefSeason,
+                    BBRefSeasonName = teamSeason.BBRefSeason.ToString()
+                };
+                var team = new TeamDto
+                {
+                    MongoTeamId = teamSeason.SynergyTeamId, TeamName = teamSeason.SynergyTeamId,
+                    BBRefTeamId = teamSeason.BBRefTeamId
+                };
+                await Scrape(season, team, players);
+            }
+
             DataExporter.Export(players, @"C:\temp\Sportradar\BBRefPlayers Additional.csv");
         }
 
