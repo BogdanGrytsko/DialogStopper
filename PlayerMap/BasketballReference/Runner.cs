@@ -27,6 +27,17 @@ namespace PlayerMap.BasketballReference
             var fileName = "PlayerCareersNBA";
             await new BBRefMapper().Map(scrapedPlayersPath, mongoPlayersPath, boxScoresPath, fileName);
         }
+        
+        [Fact]
+        public async Task MapNbaAdditional()
+        {
+            var scrapedPlayersPath = @"C:\temp\Sportradar\BBRefPlayers Additional.csv";
+            var mongoPlayersPath = @"C:\temp\Sportradar\AllPlayers.csv";
+            var boxScoresPath = @"C:\temp\Sportradar\BoxScoresNBA.csv";
+            var fileName = "PlayerCareersNBA Additional";
+            await new BBRefMapper().Map(scrapedPlayersPath, mongoPlayersPath, boxScoresPath, fileName);
+        }
+        
         [Fact]
         public async Task MapCMRef()
         {
@@ -48,11 +59,13 @@ namespace PlayerMap.BasketballReference
         {
             await new SRefScraper().ScrapeSRefTeamBBRefSeasonsBatchSize();
         }
+        
         [Fact]
         public async Task ScrapeSRef()
         {
             await new SRefScraper().ScrapeSRefToMongoTeamSRefToMongoSeasons();
         }
+        
         [Fact]
         public async Task MapNBAToCollege()
         {
