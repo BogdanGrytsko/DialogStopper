@@ -20,6 +20,8 @@ namespace DialogStopper.Storage
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 BadDataFound = null,
+                HeaderValidated = null,
+                MissingFieldFound = null
             };
             if (delimiter != null)
                 config.Delimiter = delimiter;

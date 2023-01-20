@@ -1,4 +1,5 @@
-﻿using CsvHelper.Configuration;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace PlayerMap.BasketballReference.Model
 {
@@ -12,7 +13,7 @@ namespace PlayerMap.BasketballReference.Model
             Map(x => x.Pos).Name("Pos");
             Map(x => x.Height).Name("Height");
             Map(x => x.Weight).Name("Weight");
-            Map(x => x.BirthDate).Name("BirthDate");
+            //Map(x => x.BirthDate).Name("BirthDate");
             Map(x => x.BirthCountry).Name("BirthCountry");
             Map(x => x.YearsOfExperience).Name("YearsOfExperience");
             Map(x => x.College).Name("College");
@@ -26,6 +27,8 @@ namespace PlayerMap.BasketballReference.Model
             Map(x => x.MongoTeamId).Name("MongoTeamId");
             Map(x => x.SeasonName).Name("SeasonName");
             Map(x => x.MongoSeasonId).Name("MongoSeasonId");
+
+            Map(x => x.Url).Name("PlayerUrl");
 
         }
     }

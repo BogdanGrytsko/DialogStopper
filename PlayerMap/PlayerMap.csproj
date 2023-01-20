@@ -59,8 +59,4 @@
       <EmbeddedResource Include="BasketballReference\NBA\Additional BBREF NBA Season and Teams to Scrape.csv" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="BasketballReference\GLeague" />
-    </ItemGroup>
-
 </Project>
