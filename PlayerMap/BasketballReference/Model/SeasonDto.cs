@@ -5,5 +5,6 @@
         public int BBRefSeasonId { get; set; }
         public string BBRefSeasonName { get; set; }
         public string MongoSeasonId { get; set; }
+        public string MongoSeasonLeagueId { get; set; }
     }
 }
