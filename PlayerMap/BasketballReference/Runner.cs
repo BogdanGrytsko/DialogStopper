@@ -217,7 +217,11 @@ namespace PlayerMap.BasketballReference
             foreach (var row in rows)
             {
                 var seasonName = row.SelectSingleNode(@"th[@data-stat='season']//a").InnerHtml;
-                var teamName = row.SelectSingleNode(@"td[@data-stat='team_id']//a").InnerText;
+                var teamName = row.SelectSingleNode(@"td[@data-stat='team_id']//a")?.InnerText;
+                if (teamName is null)
+                { 
+                    teamName = row.SelectSingleNode(@"td[@data-stat='team_id']")?.InnerText;
+                }
 
                 var careerItem = new CareerItem()
                 {

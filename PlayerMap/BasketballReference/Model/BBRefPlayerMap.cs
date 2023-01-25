@@ -28,7 +28,7 @@ namespace PlayerMap.BasketballReference.Model
             Map(x => x.SeasonName).Name("SeasonName");
             Map(x => x.MongoSeasonId).Name("MongoSeasonId");
 
-            Map(x => x.Url).Name("PlayerUrl");
+            //Map(x => x.Url).Name("PlayerUrl");
 
         }
     }
