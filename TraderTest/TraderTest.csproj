@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PsychologyCourseWork\PsychologyCourseWork.csproj" />
       <ProjectReference Include="..\Trader\Trader.csproj" />
     </ItemGroup>
 
