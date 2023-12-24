@@ -19,12 +19,12 @@ public class DividendsStrategy
         var fileNames = Directory.GetFiles(directoryPath);
         foreach (var filePath in fileNames)
         {
-            var parts = filePath.Split('_');
+            var parts = Path.GetFileName(filePath).Split('_');
             var symbol = parts[0];
             var candles = GetCandles(filePath);
             foreach (var candle in candles)
             {
-                dictionary.Add(new SymbolTime(symbol, candle.Date), candle);
+                dictionary.TryAdd(new SymbolTime(symbol, candle.Date), candle);
             }
         }
         return dictionary;
