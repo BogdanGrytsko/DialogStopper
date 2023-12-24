@@ -1,21 +1,38 @@
 ﻿using CsvHelper.Configuration;
 using CsvHelper;
 using System.Globalization;
+using DialogStopper.Storage;
 using Trader.Data;
 
-namespace Trader;
+namespace Trader.Dividends;
 
 public class DividendsStrategy
 {
-    public void Run()
+    public async Task Run()
     {
         var historicalData = LoadHistoricalData();
-        var dividendsData = LoadDividendsData();
+        var dividendsData = await LoadDividendsData();
     }
 
-    private object LoadDividendsData()
+    private async Task<List<Dividend>> LoadDividendsData()
     {
-        throw new NotImplementedException();
+        const string sheetId = "1Orepmp0hJiVjRQ_qVR54oZbwukHvPg9pQlUL33q3QYo";
+        var storage = new GoogleSheetStorage<DividendDto>(sheetId)
+        {
+            SheetName = "XOM"
+        };
+        var data = await storage.Get();
+        return Map(data).ToList();
+    }
+
+    private static IEnumerable<Dividend> Map(IEnumerable<DividendDto> data)
+    {
+        return data.Select(dividendDto => new Dividend
+        {
+            ExDate = dividendDto.ExDate,
+            PaymentDate = dividendDto.PaymentDate,
+            Amount = decimal.Parse(dividendDto.CashAmount, NumberStyles.Currency)
+        });
     }
 
     private static Dictionary<SymbolTime, Candle> LoadHistoricalData()

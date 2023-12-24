@@ -1,11 +1,13 @@
-﻿namespace Trader
+﻿using Trader.Dividends;
+
+namespace Trader
 {
     class Program
     {
         static async Task Main(string[] args)
         {
             var dividendsStrategy = new DividendsStrategy();
-            dividendsStrategy.Run();
+            await dividendsStrategy.Run();
         }
 
         //static async Task Main(string[] args)

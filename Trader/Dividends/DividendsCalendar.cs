@@ -1,4 +1,4 @@
-﻿namespace Trader;
+﻿namespace Trader.Dividends;
 
 public class DividendsCalendar
 {
@@ -27,7 +27,7 @@ public class DividendsCalendar
     public async Task<string> GetDataFromNasdaq(string symbol)
     {
         //doesn't work
-        var nasdaqUrl = "https://www.nasdaq.com/market-activity/stocks/{0}/dividend-history";;
+        var nasdaqUrl = "https://www.nasdaq.com/market-activity/stocks/{0}/dividend-history"; ;
         var url = string.Format(nasdaqUrl, symbol);
         return await _httpClient.GetStringAsync(url);
     }

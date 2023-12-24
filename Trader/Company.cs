@@ -1,4 +1,6 @@
-﻿namespace Trader;
+﻿using Trader.Dividends;
+
+namespace Trader;
 
 public class Company
 {
