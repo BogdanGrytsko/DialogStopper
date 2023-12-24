@@ -6,4 +6,5 @@ public class Dividend
     public decimal Amount { get; set; }
     public decimal Percent { get; set; }
     public DateTime PaymentDate { get; set; }
+    public Candle? Candle { get; set; }
 }
