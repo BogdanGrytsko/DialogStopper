@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Trader.Index
+﻿namespace Trader.Index
 {
     //SMA = Simple Moving Average
     public class Indicator

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Trader.Index
+﻿namespace Trader.Index
 {
     /// <summary>
     /// Relative Strength Index

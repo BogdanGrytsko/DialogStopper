@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DialogStopper.Storage;
-using Trader.Index;
-using Trader.MyFxBook;
-
-namespace Trader
+﻿namespace Trader
 {
     class Program
     {

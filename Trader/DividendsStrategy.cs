@@ -10,6 +10,12 @@ public class DividendsStrategy
     public void Run()
     {
         var historicalData = LoadHistoricalData();
+        var dividendsData = LoadDividendsData();
+    }
+
+    private object LoadDividendsData()
+    {
+        throw new NotImplementedException();
     }
 
     private static Dictionary<SymbolTime, Candle> LoadHistoricalData()
