@@ -12,8 +12,8 @@ namespace Trader
     {
         static async Task Main(string[] args)
         {
-            var calendar = new DividendsCalendar();
-            await calendar.Scrape();
+            var dividendsStrategy = new DividendsStrategy();
+            dividendsStrategy.Run();
         }
 
         //static async Task Main(string[] args)
