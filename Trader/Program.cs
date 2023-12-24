@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DialogStopper.Storage;
-using Trader.Index;
-using Trader.MyFxBook;
+﻿using Trader.Dividends;
 
 namespace Trader
 {
@@ -13,7 +7,7 @@ namespace Trader
         static async Task Main(string[] args)
         {
             var dividendsStrategy = new DividendsStrategy();
-            dividendsStrategy.Run();
+            await dividendsStrategy.Run();
         }
 
         //static async Task Main(string[] args)

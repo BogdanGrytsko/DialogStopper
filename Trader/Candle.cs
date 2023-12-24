@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Trader
+﻿namespace Trader
 {
     public class Candle
     {

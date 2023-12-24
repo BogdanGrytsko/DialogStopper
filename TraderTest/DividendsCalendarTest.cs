@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Trader;
+using Trader.Dividends;
 using Xunit;
 
 namespace TraderTest;

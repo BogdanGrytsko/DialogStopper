@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Trader.Index
+﻿namespace Trader.Index
 {
     public class FormatIndicator
     {

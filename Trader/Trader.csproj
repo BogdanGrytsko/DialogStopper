@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
 	    <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
     </PropertyGroup>
 
@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <PackageReference Include="CsvHelper" Version="27.2.1" />
+      <PackageReference Include="FluentAssertions" Version="6.5.1" />
       <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
     </ItemGroup>
 

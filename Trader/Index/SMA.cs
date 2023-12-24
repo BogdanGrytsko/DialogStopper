@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Trader.Index
+﻿namespace Trader.Index
 {
     /// <summary>
     /// Simple Moving Average. Users can offset as the want

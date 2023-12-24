@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections;
 using System.Reflection;
-using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -96,7 +91,7 @@ namespace DialogStopper.Storage
             return ((char)('A' - 1 + PropertyInfos.Length)).ToString();
         }
 
-        protected async Task<List<T>> Get(int startRow = 1, int? endRow = null)
+        public async Task<List<T>> Get(int startRow = 1, int? endRow = null)
         {
             var range = GetRange(startRow, endRow);
             var request = SheetsService.Spreadsheets.Values.Get(sheetId, range);
@@ -174,7 +169,7 @@ namespace DialogStopper.Storage
             
             for (int i = 0; i < headers.Count; i++)
             {
-                headerMap.Add(headers[i].ToString(), i);
+                headerMap.Add(headers[i].ToString().Replace(" ", string.Empty), i);
             }
 
             return headerMap;
