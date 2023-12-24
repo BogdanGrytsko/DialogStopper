@@ -1,3 +1,0 @@
-  <data name="{name}" xml:space="preserve">
-    <value>{value}</value>
-  </data>
