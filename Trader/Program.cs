@@ -6,8 +6,9 @@ namespace Trader
     {
         static async Task Main(string[] args)
         {
-            var dividendsStrategy = new DividendsStrategy();
-            await dividendsStrategy.Run();
+            //await DividendsDataMover.Move();
+            //var dividendsStrategy = new DividendsStrategy();
+            //await dividendsStrategy.Run();
         }
 
         //static async Task Main(string[] args)

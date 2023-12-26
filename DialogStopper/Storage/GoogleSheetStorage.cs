@@ -106,7 +106,10 @@ namespace DialogStopper.Storage
                 var data = new T();
                 foreach (var prop in PropertyInfos)
                 {
-                    var value = valueList[map[prop.Name]];
+                    var idx = map[prop.Name];
+                    // skip missing values
+                    if (idx >= valueList.Count) continue;
+                    var value = valueList[idx];
                     var type = prop.PropertyType;
                     if (!IsEnumerable(prop))
                     {

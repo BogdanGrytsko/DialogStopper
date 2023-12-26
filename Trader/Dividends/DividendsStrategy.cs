@@ -1,8 +1,4 @@
-﻿using CsvHelper.Configuration;
-using CsvHelper;
-using System.Globalization;
-using DialogStopper.Storage;
-using Trader.Data;
+﻿using Trader.Data;
 
 namespace Trader.Dividends;
 
@@ -13,8 +9,8 @@ public class DividendsStrategy
 
     public async Task Run()
     {
-        _historicalData = LoadHistoricalData();
-        _dividends = await LoadDividendsData();
+        _historicalData = MarketWatchDataLoader.LoadHistoricalData();
+        _dividends = await GoogleSheetDividendsLoader.LoadDividendsData("XOM");
         MapHistoricalData();
 
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
@@ -69,60 +65,5 @@ public class DividendsStrategy
                 dividend.Value.Percent = dividend.Value.Amount / candle.Open;
             }
         }
-    }
-
-    private async Task<SortedDictionary<SymbolTime, Dividend>> LoadDividendsData()
-    {
-        var symbol = "XOM";
-        const string sheetId = "1Orepmp0hJiVjRQ_qVR54oZbwukHvPg9pQlUL33q3QYo";
-        var storage = new GoogleSheetStorage<DividendDto>(sheetId)
-        {
-            SheetName = symbol
-        };
-        var data = await storage.Get();
-        var mapped = Map(data);
-        var sortedDictionary = new SortedDictionary<SymbolTime, Dividend>();
-        foreach (var kvp in mapped)
-        {
-            sortedDictionary.Add(new SymbolTime(symbol, kvp.ExDate), kvp);
-        }
-        return sortedDictionary;
-    }
-
-    private static IEnumerable<Dividend> Map(IEnumerable<DividendDto> data)
-    {
-        return data.Select(dividendDto => new Dividend
-        {
-            ExDate = dividendDto.ExDate,
-            PaymentDate = dividendDto.PaymentDate,
-            Amount = decimal.Parse(dividendDto.CashAmount, NumberStyles.Currency)
-        });
-    }
-
-    private static Dictionary<SymbolTime, Candle> LoadHistoricalData()
-    {
-        var directoryPath = "Data";
-        var dictionary = new Dictionary<SymbolTime, Candle>();
-        var fileNames = Directory.GetFiles(directoryPath);
-        foreach (var filePath in fileNames)
-        {
-            var parts = Path.GetFileName(filePath).Split('_');
-            var symbol = parts[0];
-            var candles = GetCandles(filePath);
-            foreach (var candle in candles)
-            {
-                dictionary.TryAdd(new SymbolTime(symbol, candle.Date), candle);
-            }
-        }
-        return dictionary;
-    }
-
-    private static List<Candle> GetCandles(string filePath)
-    {
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
-        csv.Context.RegisterClassMap<MarketWatchCandleMap>();
-        var records = csv.GetRecords<Candle>().ToList();
-        return records;
     }
 }
