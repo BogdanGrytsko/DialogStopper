@@ -1,4 +1,5 @@
-﻿using Trader.Dividends;
+﻿using Trader.Data;
+using Trader.Dividends;
 
 namespace Trader
 {
@@ -6,6 +7,7 @@ namespace Trader
     {
         static async Task Main(string[] args)
         {
+            await StooqCandleDataMover.Move();
             //await DividendsDataMover.Move();
             //var dividendsStrategy = new DividendsStrategy();
             //await dividendsStrategy.Run();
