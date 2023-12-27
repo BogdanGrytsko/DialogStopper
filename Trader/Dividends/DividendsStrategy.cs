@@ -2,9 +2,9 @@
 
 public class DividendsStrategy
 {
-    //public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
-    public static List<string> Symbols = new() { "XOM", "KO", "MCD" };
-
+    //either VZ or T
+    public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+    
     private Dictionary<SymbolTime, Candle> _historicalData;
     private SortedDictionary<SymbolTime, Dividend> _dividends;
     private readonly TradingContext _context;
