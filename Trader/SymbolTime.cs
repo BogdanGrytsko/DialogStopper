@@ -6,9 +6,9 @@ public record SymbolTime(string Symbol, DateTime Time) : IComparable<SymbolTime>
 {
     public int CompareTo(SymbolTime other)
     {
-        if (other.Symbol != Symbol)
-            return Compare(Symbol, other.Symbol, StringComparison.Ordinal);
-        return Time.CompareTo(other.Time);
+        if (Time != other.Time)
+            return Time.CompareTo(other.Time);
+        return Compare(Symbol, other.Symbol, StringComparison.Ordinal);
     }
 
     public override string ToString()
