@@ -1,16 +1,24 @@
-﻿using Trader.Data;
-
-namespace Trader.Dividends;
+﻿namespace Trader.Dividends;
 
 public class DividendsStrategy
 {
+    //public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+    public static List<string> Symbols = new() { "XOM" };
+
     private Dictionary<SymbolTime, Candle> _historicalData;
     private SortedDictionary<SymbolTime, Dividend> _dividends;
+    private readonly TradingContext _context;
+
+    public DividendsStrategy()
+    {
+        _context = new TradingContext();
+    }
 
     public async Task Run()
     {
-        _historicalData = MarketWatchDataLoader.LoadHistoricalData();
-        _dividends = await GoogleSheetDividendsLoader.LoadDividendsData("XOM");
+        var startDate = new DateTime(2021, 10, 1);
+        _historicalData = GetHistoricalData(startDate);
+        _dividends = GetDividendsData(startDate);
         MapHistoricalData();
 
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
@@ -33,6 +41,29 @@ public class DividendsStrategy
         }
 
         Console.WriteLine($"Initial capital: {startCapital}, End Capital: {capital:F0}");
+    }
+
+    private SortedDictionary<SymbolTime, Dividend> GetDividendsData(DateTime startDate)
+    {
+        var dividends = _context.Dividends.Where(x => Symbols.Contains(x.Symbol) && x.ExDate >= startDate);
+        var sortedDictionary = new SortedDictionary<SymbolTime, Dividend>();
+        foreach (var kvp in dividends)
+        {
+            var key = new SymbolTime(kvp.Symbol, kvp.ExDate);
+            sortedDictionary.Add(key, kvp);
+        }
+        return sortedDictionary;
+    }
+
+    private Dictionary<SymbolTime, Candle> GetHistoricalData(DateTime startDate)
+    {
+        var candles = _context.Candles.Where(x => Symbols.Contains(x.Symbol) && x.Date >= startDate);
+        var dictionary = new Dictionary<SymbolTime, Candle>();
+        foreach (var candle in candles)
+        {
+            dictionary.TryAdd(new SymbolTime(candle.Symbol, candle.Date), candle);
+        }
+        return dictionary;
     }
 
     private DateTime GetDateBefore(SymbolTime symbolTime, int daysBeforeExDate)

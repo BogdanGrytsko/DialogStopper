@@ -4,4 +4,5 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=RSI/@EntryIndexedValue">RSI</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=SA/@EntryIndexedValue">SA</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=SMA/@EntryIndexedValue">SMA</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=ABBV/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Stooq/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

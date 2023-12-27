@@ -4,9 +4,8 @@ public class DividendsDataMover
 {
     public static async Task Move()
     {
-        var symbols = new List<string> { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
         await using var db = new TradingContext();
-        foreach (var symbol in symbols)
+        foreach (var symbol in DividendsStrategy.Symbols)
         {
             var data = await GoogleSheetDividendsLoader.LoadDividendsData(symbol);
             foreach (var dividend in data.Values)

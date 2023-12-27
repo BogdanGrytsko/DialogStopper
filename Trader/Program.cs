@@ -7,10 +7,10 @@ namespace Trader
     {
         static async Task Main(string[] args)
         {
-            await StooqCandleDataMover.Move();
+            //await StooqCandleDataMover.Move();
             //await DividendsDataMover.Move();
-            //var dividendsStrategy = new DividendsStrategy();
-            //await dividendsStrategy.Run();
+            var dividendsStrategy = new DividendsStrategy();
+            await dividendsStrategy.Run();
         }
 
         //static async Task Main(string[] args)

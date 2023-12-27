@@ -4,7 +4,7 @@ using CsvHelper;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using CsvHelper.TypeConversion;
-using System.Formats.Asn1;
+using Trader.Dividends;
 
 namespace Trader.Data;
 
@@ -12,7 +12,7 @@ public class StooqCandleDataMover
 {
     public static async Task Move()
     {
-        var symbols = new List<string> { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+        var symbols = DividendsStrategy.Symbols;
         await using var db = new TradingContext();
 
         var path = @"D:\\d_us_txt.zip";
