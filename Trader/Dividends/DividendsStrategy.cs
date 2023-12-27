@@ -2,9 +2,9 @@
 
 public class DividendsStrategy
 {
-    //public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
-    public static List<string> Symbols = new() { "XOM", "KO", "MCD" };
-
+    //either VZ or T
+    public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+    
     private Dictionary<SymbolTime, Candle> _historicalData;
     private SortedDictionary<SymbolTime, Dividend> _dividends;
     private readonly TradingContext _context;
@@ -28,6 +28,7 @@ public class DividendsStrategy
         var time = startDate;
         var daysBeforeExDate = 1;
         var daysAfterExDate = 0;
+        var dividendsList = new List<(DateTime, decimal)>();
         foreach (var dividend in _dividends)
         {
             //can't go backwards in time
@@ -41,13 +42,19 @@ public class DividendsStrategy
             //has to account for Monday --> Sunday! Need to buy on Friday
             var buyDate = GetDateBefore(dividend.Key, daysBeforeExDate);
             var buyPrice = _historicalData[dividend.Key with { Time = buyDate }].Open;
+
+            var dividendsToCollect = dividendsList.Where(x => x.Item1 <= buyDate).Sum(x => x.Item2);
+            capital += dividendsToCollect;
+            dividendsList.RemoveAll(x => x.Item1 <= buyDate);
+
             var stockAmt = capital / buyPrice;
             var sellDate = GetDateAfter(dividend.Key, daysAfterExDate);
             var sellPrice = _historicalData[dividend.Key with { Time = sellDate }].Open;
             var dividendGain = stockAmt * dividend.Value.Amount;
+            dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
             capital = stockAmt * sellPrice;
-            capital += dividendGain;
-            Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital}, Symbol: {dividend.Key.Symbol}");
+
+            Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
         }
 
         var years =  endDate.Year - startDate.Year;
