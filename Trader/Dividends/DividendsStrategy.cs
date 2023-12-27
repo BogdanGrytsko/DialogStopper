@@ -1,29 +1,43 @@
-﻿using CsvHelper.Configuration;
-using CsvHelper;
-using System.Globalization;
-using DialogStopper.Storage;
-using Trader.Data;
-
-namespace Trader.Dividends;
+﻿namespace Trader.Dividends;
 
 public class DividendsStrategy
 {
+    //public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+    public static List<string> Symbols = new() { "XOM", "KO", "MCD" };
+
     private Dictionary<SymbolTime, Candle> _historicalData;
     private SortedDictionary<SymbolTime, Dividend> _dividends;
+    private readonly TradingContext _context;
+
+    public DividendsStrategy()
+    {
+        _context = new TradingContext();
+    }
 
     public async Task Run()
     {
-        _historicalData = LoadHistoricalData();
-        _dividends = await LoadDividendsData();
+        var startDate = new DateTime(2010, 1, 1);
+        var endDate = new DateTime(2024, 1, 1);
+        _historicalData = GetHistoricalData(startDate, endDate);
+        _dividends = GetDividendsData(startDate, endDate);
         MapHistoricalData();
 
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
         var startCapital = 100000m;
         var capital = startCapital;
+        var time = startDate;
         var daysBeforeExDate = 1;
         var daysAfterExDate = 0;
-        foreach (var dividend in _dividends.Where(x => x.Value.Candle != null))
+        foreach (var dividend in _dividends)
         {
+            //can't go backwards in time
+            if (time >= dividend.Key.Time)
+            {
+                Console.WriteLine($"Skip trading {dividend.Key.Symbol}");
+                continue;
+            }
+            time = dividend.Key.Time;
+
             //has to account for Monday --> Sunday! Need to buy on Friday
             var buyDate = GetDateBefore(dividend.Key, daysBeforeExDate);
             var buyPrice = _historicalData[dividend.Key with { Time = buyDate }].Open;
@@ -33,10 +47,35 @@ public class DividendsStrategy
             var dividendGain = stockAmt * dividend.Value.Amount;
             capital = stockAmt * sellPrice;
             capital += dividendGain;
-            Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital}");
+            Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital}, Symbol: {dividend.Key.Symbol}");
         }
 
-        Console.WriteLine($"Initial capital: {startCapital}, End Capital: {capital:F0}");
+        var years =  endDate.Year - startDate.Year;
+        var compoundingPerYear = Math.Pow((double)capital / (double)startCapital, 1 / (double)years) - 1;
+        Console.WriteLine($"Initial: {startCapital}, End: {capital:F0}, Years: {years}, Compound per year: {compoundingPerYear * 100:F2}");
+    }
+
+    private SortedDictionary<SymbolTime, Dividend> GetDividendsData(DateTime startDate, DateTime endDate)
+    {
+        var dividends = _context.Dividends.Where(x => Symbols.Contains(x.Symbol) && x.ExDate >= startDate && x.ExDate <= endDate);
+        var sortedDictionary = new SortedDictionary<SymbolTime, Dividend>();
+        foreach (var kvp in dividends)
+        {
+            var key = new SymbolTime(kvp.Symbol, kvp.ExDate);
+            sortedDictionary.Add(key, kvp);
+        }
+        return sortedDictionary;
+    }
+
+    private Dictionary<SymbolTime, Candle> GetHistoricalData(DateTime startDate, DateTime endDate)
+    {
+        var candles = _context.Candles.Where(x => Symbols.Contains(x.Symbol) && x.Date >= startDate && x.Date <= endDate);
+        var dictionary = new Dictionary<SymbolTime, Candle>();
+        foreach (var candle in candles)
+        {
+            dictionary.TryAdd(new SymbolTime(candle.Symbol, candle.Date), candle);
+        }
+        return dictionary;
     }
 
     private DateTime GetDateBefore(SymbolTime symbolTime, int daysBeforeExDate)
@@ -69,60 +108,5 @@ public class DividendsStrategy
                 dividend.Value.Percent = dividend.Value.Amount / candle.Open;
             }
         }
-    }
-
-    private async Task<SortedDictionary<SymbolTime, Dividend>> LoadDividendsData()
-    {
-        var symbol = "XOM";
-        const string sheetId = "1Orepmp0hJiVjRQ_qVR54oZbwukHvPg9pQlUL33q3QYo";
-        var storage = new GoogleSheetStorage<DividendDto>(sheetId)
-        {
-            SheetName = symbol
-        };
-        var data = await storage.Get();
-        var mapped = Map(data);
-        var sortedDictionary = new SortedDictionary<SymbolTime, Dividend>();
-        foreach (var kvp in mapped)
-        {
-            sortedDictionary.Add(new SymbolTime(symbol, kvp.ExDate), kvp);
-        }
-        return sortedDictionary;
-    }
-
-    private static IEnumerable<Dividend> Map(IEnumerable<DividendDto> data)
-    {
-        return data.Select(dividendDto => new Dividend
-        {
-            ExDate = dividendDto.ExDate,
-            PaymentDate = dividendDto.PaymentDate,
-            Amount = decimal.Parse(dividendDto.CashAmount, NumberStyles.Currency)
-        });
-    }
-
-    private static Dictionary<SymbolTime, Candle> LoadHistoricalData()
-    {
-        var directoryPath = "Data";
-        var dictionary = new Dictionary<SymbolTime, Candle>();
-        var fileNames = Directory.GetFiles(directoryPath);
-        foreach (var filePath in fileNames)
-        {
-            var parts = Path.GetFileName(filePath).Split('_');
-            var symbol = parts[0];
-            var candles = GetCandles(filePath);
-            foreach (var candle in candles)
-            {
-                dictionary.TryAdd(new SymbolTime(symbol, candle.Date), candle);
-            }
-        }
-        return dictionary;
-    }
-
-    private static List<Candle> GetCandles(string filePath)
-    {
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture));
-        csv.Context.RegisterClassMap<MarketWatchCandleMap>();
-        var records = csv.GetRecords<Candle>().ToList();
-        return records;
     }
 }
