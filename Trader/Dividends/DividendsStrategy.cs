@@ -18,7 +18,7 @@ public class DividendsStrategy
 
     public async Task Run()
     {
-        var startDate = new DateTime(2022, 1, 1);
+        var startDate = new DateTime(2020, 1, 1);
         var endDate = new DateTime(2024, 1, 1);
         _historicalData = GetHistoricalData(startDate, endDate);
         _dividends = GetDividendsData(startDate, endDate);
