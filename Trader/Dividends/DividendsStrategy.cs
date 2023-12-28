@@ -8,15 +8,17 @@ public class DividendsStrategy
     private Dictionary<SymbolTime, Candle> _historicalData;
     private SortedDictionary<SymbolTime, Dividend> _dividends;
     private readonly TradingContext _context;
+    private readonly List<(DateTime, decimal)> _dividendsList;
 
     public DividendsStrategy()
     {
         _context = new TradingContext();
+        _dividendsList = new List<(DateTime, decimal)>();
     }
 
     public async Task Run()
     {
-        var startDate = new DateTime(2010, 1, 1);
+        var startDate = new DateTime(2022, 1, 1);
         var endDate = new DateTime(2024, 1, 1);
         _historicalData = GetHistoricalData(startDate, endDate);
         _dividends = GetDividendsData(startDate, endDate);
@@ -28,7 +30,6 @@ public class DividendsStrategy
         var time = startDate;
         var daysBeforeExDate = 1;
         var daysAfterExDate = 0;
-        var dividendsList = new List<(DateTime, decimal)>();
         foreach (var dividend in _dividends)
         {
             //can't go backwards in time
@@ -43,23 +44,30 @@ public class DividendsStrategy
             var buyDate = GetDateBefore(dividend.Key, daysBeforeExDate);
             var buyPrice = _historicalData[dividend.Key with { Time = buyDate }].Open;
 
-            var dividendsToCollect = dividendsList.Where(x => x.Item1 <= buyDate).Sum(x => x.Item2);
-            capital += dividendsToCollect;
-            dividendsList.RemoveAll(x => x.Item1 <= buyDate);
+            capital += CollectDividends(buyDate);
 
             var stockAmt = capital / buyPrice;
             var sellDate = GetDateAfter(dividend.Key, daysAfterExDate);
             var sellPrice = _historicalData[dividend.Key with { Time = sellDate }].Open;
             var dividendGain = stockAmt * dividend.Value.Amount;
-            dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
+            _dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
             capital = stockAmt * sellPrice;
 
             Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
         }
 
+        capital += CollectDividends(endDate.AddMonths(4));
+
         var years =  endDate.Year - startDate.Year;
         var compoundingPerYear = Math.Pow((double)capital / (double)startCapital, 1 / (double)years) - 1;
         Console.WriteLine($"Initial: {startCapital}, End: {capital:F0}, Years: {years}, Compound per year: {compoundingPerYear * 100:F2}");
+    }
+
+    private decimal CollectDividends(DateTime buyDate)
+    {
+        var dividendsToCollect = _dividendsList.Where(x => x.Item1 <= buyDate).Sum(x => x.Item2);
+        _dividendsList.RemoveAll(x => x.Item1 <= buyDate);
+        return dividendsToCollect;
     }
 
     private SortedDictionary<SymbolTime, Dividend> GetDividendsData(DateTime startDate, DateTime endDate)
