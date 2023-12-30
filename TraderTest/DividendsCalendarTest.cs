@@ -7,11 +7,11 @@ namespace TraderTest;
 
 public class DividendsCalendarTest
 {
-    private readonly DividendsCalendar _sut;
+    private readonly DividendsScrapeAttempt _sut;
 
     public DividendsCalendarTest()
     {
-        _sut = new DividendsCalendar();
+        _sut = new DividendsScrapeAttempt();
     }
 
     [Fact]

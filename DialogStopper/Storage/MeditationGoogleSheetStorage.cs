@@ -16,15 +16,15 @@ namespace DialogStopper.Storage
             var lines = await File.ReadAllLinesAsync(logFile);
             var entries = lines.Select(Meditation.FromTxtFile).ToList();
             //only new
-            var data = await Get();
+            var data = await GetAsync();
             var set = data.Select(x => x.TimeStamp).ToHashSet();
             entries = entries.Where(x => !set.Contains(x.TimeStamp)).ToList();
-            await Add(entries, !data.Any());
+            await AddAsync(entries, !data.Any());
         }
 
         public async Task UpdateStats(int startRow)
         {
-            var data = await Get(startRow);
+            var data = await GetAsync(startRow);
             var updateRange = $"{SheetName}!C{startRow}:I{startRow + data.Count - 1}";
             var lists = new List<IList<object>>();
             foreach (var line in data)

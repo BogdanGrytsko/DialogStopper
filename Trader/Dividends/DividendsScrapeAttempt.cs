@@ -1,20 +1,14 @@
 ﻿namespace Trader.Dividends;
 
-public class DividendsCalendar
+public class DividendsScrapeAttempt
 {
-    private static string TradingViewUrl = "https://www.tradingview.com/chart/MTdLRWLd/?symbol={0}";
-
     private readonly List<string> _symbols;
     private readonly HttpClient _httpClient;
 
-    public DividendsCalendar()
+    public DividendsScrapeAttempt()
     {
         _symbols = new List<string> { "XOM", "KO", "T", "VZ", "CVX", "MCD", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
         _httpClient = new HttpClient();
-    }
-
-    public async Task Scrape()
-    {
     }
 
     public async Task<string> GetDataFromSA(string symbol)

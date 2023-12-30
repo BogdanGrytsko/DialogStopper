@@ -9,18 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="Data\XOM_1D_1Y_2022-12-10.csv">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Data\XOM_1D_1Y_2023-12-10.csv">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="MyFxBook\EURUSD_5min_FEB_14-15_2022.csv">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="CsvHelper" Version="27.2.1" />
       <PackageReference Include="FluentAssertions" Version="6.5.1" />
       <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
