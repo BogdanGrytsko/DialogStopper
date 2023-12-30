@@ -20,7 +20,7 @@ public class DividendsStrategy
 
     public async Task Run()
     {
-        var startDate = new DateTime(2020, 1, 1);
+        var startDate = new DateTime(2022, 1, 1);
         var endDate = new DateTime(2024, 1, 1);
         _historicalData = GetHistoricalData(startDate, endDate);
         _dividends = GetDividendsData(startDate, endDate);
@@ -46,6 +46,7 @@ public class DividendsStrategy
             var buyDate = GetDateBefore(dividend.Key, daysBeforeExDate);
             var buyPrice = _historicalData[dividend.Key with { Time = buyDate }].Open;
             capital += CollectDividends(buyDate);
+            var capitalBeforeBuy = capital;
             var stockAmt = capital / buyPrice;
             var sellDate = GetDateAfter(dividend.Key, daysAfterExDate);
             var sellPrice = _historicalData[dividend.Key with { Time = sellDate }].Open;
@@ -55,8 +56,8 @@ public class DividendsStrategy
 
             _trades.Add(new PortfolioDividendTrade
             {
-                Date = dividend.Key.Time, Capital = capital, DividendPercent = dividend.Value.Percent,
-                DividendGain = dividendGain, Symbol = dividend.Key.Symbol
+                Date = dividend.Key.Time, BuySellGain = capital - capitalBeforeBuy, EndCapital = capital,
+                DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol
             });
             Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
         }
@@ -66,7 +67,7 @@ public class DividendsStrategy
         CalcCompounding(endDate, startDate, capital, startCapital);
 
         AddProjectedFutureDates(endDate);
-        _trades.Add(new PortfolioDividendTrade { Date = cutoffDate, Capital = capital });
+        _trades.Add(new PortfolioDividendTrade { Date = cutoffDate, EndCapital = capital });
         await GoogleSheetDividends.StoreData(_trades);
     }
 
