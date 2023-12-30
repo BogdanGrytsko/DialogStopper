@@ -31,7 +31,7 @@ namespace DialogStopper.Storage
 
         public string SheetName { protected get; set; }
 
-        public async Task Add(List<T> data, bool addHeaders)
+        public async Task AddAsync(List<T> data, bool addHeaders)
         {
             var valueRange = new ValueRange {Values = new List<IList<object>>()};
             if (addHeaders)
@@ -55,6 +55,10 @@ namespace DialogStopper.Storage
                         var prepared = ((IEnumerable)value).Cast<object>().Select(x => x.ToString());
                         rowValues.Add(string.Join(listSeparator, prepared));                        
                     }
+                    else if (value is decimal decimalVal)
+                    {
+                        rowValues.Add(decimalVal.ToString("F2"));
+                    }
                     else
                     {
                         rowValues.Add(value);                        
@@ -74,9 +78,9 @@ namespace DialogStopper.Storage
             return prop.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType);
         }
 
-        public async Task Add(T entry)
+        public async Task AddAsync(T entry)
         {
-            await Add(new List<T> { entry }, false);
+            await AddAsync(new List<T> { entry }, false);
         }
 
         private string GetRange(int? startRow = null, int? endRow = null)
@@ -91,7 +95,7 @@ namespace DialogStopper.Storage
             return ((char)('A' - 1 + PropertyInfos.Length)).ToString();
         }
 
-        public async Task<List<T>> Get(int startRow = 1, int? endRow = null)
+        public async Task<List<T>> GetAsync(int startRow = 1, int? endRow = null)
         {
             var range = GetRange(startRow, endRow);
             var request = SheetsService.Spreadsheets.Values.Get(sheetId, range);
@@ -189,7 +193,7 @@ namespace DialogStopper.Storage
                 propertyInfo.SetValue(src, value);
         }
 
-        public async Task Delete(int startRow, int? endRow = null)
+        public async Task DeleteAsync(int startRow = 1, int? endRow = null)
         {
             var requestBody = new ClearValuesRequest();
             var deleteRequest =
@@ -200,7 +204,7 @@ namespace DialogStopper.Storage
         public async Task Update(List<T> data)
         {
             //todo: get by range, headers needed?
-            var sheetData = Get();
+            var sheetData = GetAsync();
             
             var lists = new List<IList<object>>();
             

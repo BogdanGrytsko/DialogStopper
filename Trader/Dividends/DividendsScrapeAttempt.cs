@@ -1,11 +1,11 @@
 ﻿namespace Trader.Dividends;
 
-public class DividendsCalendar
+public class DividendsScrapeAttempt
 {
     private readonly List<string> _symbols;
     private readonly HttpClient _httpClient;
 
-    public DividendsCalendar()
+    public DividendsScrapeAttempt()
     {
         _symbols = new List<string> { "XOM", "KO", "T", "VZ", "CVX", "MCD", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
         _httpClient = new HttpClient();

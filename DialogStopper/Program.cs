@@ -52,7 +52,7 @@ namespace DialogStopper
 
             var meditation = new Meditation(DateTime.UtcNow, points);
             await File.AppendAllTextAsync(logFile, JsonConvert.SerializeObject(meditation));
-            await new MeditationGoogleSheetStorage().Add(meditation);
+            await new MeditationGoogleSheetStorage().AddAsync(meditation);
             Console.WriteLine("Store completed");
         }
     }

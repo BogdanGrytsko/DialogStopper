@@ -9,11 +9,13 @@ public class DividendsStrategy
     private SortedDictionary<SymbolTime, Dividend> _dividends;
     private readonly TradingContext _context;
     private readonly List<(DateTime, decimal)> _dividendsList;
+    private readonly List<PortfolioDividendTrade> _trades;
 
     public DividendsStrategy()
     {
         _context = new TradingContext();
         _dividendsList = new List<(DateTime, decimal)>();
+        _trades = new List<PortfolioDividendTrade>();
     }
 
     public async Task Run()
@@ -43,9 +45,7 @@ public class DividendsStrategy
             //has to account for Monday --> Sunday! Need to buy on Friday
             var buyDate = GetDateBefore(dividend.Key, daysBeforeExDate);
             var buyPrice = _historicalData[dividend.Key with { Time = buyDate }].Open;
-
             capital += CollectDividends(buyDate);
-
             var stockAmt = capital / buyPrice;
             var sellDate = GetDateAfter(dividend.Key, daysAfterExDate);
             var sellPrice = _historicalData[dividend.Key with { Time = sellDate }].Open;
@@ -53,14 +53,42 @@ public class DividendsStrategy
             _dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
             capital = stockAmt * sellPrice;
 
+            _trades.Add(new PortfolioDividendTrade
+            {
+                Date = dividend.Key.Time, Capital = capital, DividendPercent = dividend.Value.Percent,
+                DividendGain = dividendGain, Symbol = dividend.Key.Symbol
+            });
             Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
         }
 
-        capital += CollectDividends(endDate.AddMonths(4));
+        var cutoffDate = endDate.AddMonths(3);
+        capital += CollectDividends(cutoffDate);
+        CalcCompounding(endDate, startDate, capital, startCapital);
 
-        var years =  endDate.Year - startDate.Year;
+        AddProjectedFutureDates(endDate);
+        _trades.Add(new PortfolioDividendTrade { Date = cutoffDate, Capital = capital });
+        await GoogleSheetDividends.StoreData(_trades);
+    }
+
+    private void AddProjectedFutureDates(DateTime endDate)
+    {
+        //predict based on previous year - same quarter
+        foreach (var dividend in _dividends.Values)
+        {
+            var projectedDate = dividend.ExDate.AddYears(1);
+            if (projectedDate <= endDate.AddMonths(3) && projectedDate > endDate)
+            {
+                _trades.Add(new PortfolioDividendTrade { Date = projectedDate, Symbol = dividend.Symbol, DividendPercent = dividend.Percent });
+            }
+        }
+    }
+
+    private static void CalcCompounding(DateTime endDate, DateTime startDate, decimal capital, decimal startCapital)
+    {
+        var years = endDate.Year - startDate.Year;
         var compoundingPerYear = Math.Pow((double)capital / (double)startCapital, 1 / (double)years) - 1;
-        Console.WriteLine($"Initial: {startCapital}, End: {capital:F0}, Years: {years}, Compound per year: {compoundingPerYear * 100:F2}");
+        Console.WriteLine(
+            $"Initial: {startCapital}, End: {capital:F0}, Years: {years}, Compound per year: {compoundingPerYear * 100:F2}");
     }
 
     private decimal CollectDividends(DateTime buyDate)
@@ -120,7 +148,7 @@ public class DividendsStrategy
             if (_historicalData.TryGetValue(dividend.Key, out var candle))
             {
                 dividend.Value.Candle = candle;
-                dividend.Value.Percent = dividend.Value.Amount / candle.Open;
+                dividend.Value.Percent = (dividend.Value.Amount / candle.Open) * 100;
             }
         }
     }
