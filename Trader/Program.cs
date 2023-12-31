@@ -9,7 +9,8 @@ namespace Trader
         {
             //await StooqCandleDataMover.Move();
             //await DividendsDataMover.Move();
-            var dividendsStrategy = new DividendsStrategy();
+            var readModel = new DividendsReadModel(new TradingContext());
+            var dividendsStrategy = new DividendsStrategy(readModel);
             await dividendsStrategy.Run();
         }
 
