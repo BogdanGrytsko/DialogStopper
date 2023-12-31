@@ -55,8 +55,8 @@ public class DividendsReadModel
 
     public DateTime GetDateBefore(SymbolTime symbolTime, int daysBeforeExDate)
     {
-        if (daysBeforeExDate > 10)
-            throw new Exception("daysBeforeExDate > 10");
+        if (daysBeforeExDate > 20)
+            throw new Exception("daysBeforeExDate > 20");
         var date = symbolTime.Time.AddDays(-daysBeforeExDate);
         if (!HistoricalData.ContainsKey(symbolTime with { Time = date }))
             return GetDateBefore(symbolTime, daysBeforeExDate + 1);
@@ -65,11 +65,11 @@ public class DividendsReadModel
 
     public DateTime GetDateAfter(SymbolTime symbolTime, int daysAfterExDate)
     {
-        if (daysAfterExDate > 10)
-            throw new Exception("daysAfterExDate > 10");
+        if (daysAfterExDate > 20)
+            throw new Exception("daysAfterExDate > 20");
         var date = symbolTime.Time.AddDays(daysAfterExDate);
         if (!HistoricalData.ContainsKey(symbolTime with { Time = date }))
-            return GetDateBefore(symbolTime, daysAfterExDate + 1);
+            return GetDateAfter(symbolTime, daysAfterExDate + 1);
         return date;
     }
 }

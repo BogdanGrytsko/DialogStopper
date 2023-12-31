@@ -22,11 +22,17 @@ public class DividendsStrategy
         {
             StartDate = new DateTime(2022, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
+            Verbose = true
         };
         _readModel.Load(input);
 
-        SimpleTimeStrategy(input);
-        await GoogleSheetDividends.StoreData(_trades);
+        for (int i = 0; i < 1; i++)
+        {
+            input.DaysAfterExDate = i;
+            SimpleTimeStrategy(input);
+        }
+        if (input.Verbose)
+            await GoogleSheetDividends.StoreData(_trades);
     }
 
     private void SimpleTimeStrategy(DividendsInputParams input)
@@ -34,45 +40,48 @@ public class DividendsStrategy
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
         var capital = input.StartCapital;
         var time = input.StartDate;
-        var daysBeforeExDate = 1;
-        var daysAfterExDate = 0;
         foreach (var dividend in _readModel.Dividends)
         {
             //can't go backwards in time
             if (time >= dividend.Key.Time)
             {
-                Console.WriteLine($"Skip trading {dividend.Key.Symbol}");
+                if (input.Verbose)
+                    Console.WriteLine($"Skip trading {dividend.Key.Symbol}");
                 continue;
             }
 
             time = dividend.Key.Time;
 
             //has to account for Monday --> Sunday! Need to buy on Friday
-            var buyDate = _readModel.GetDateBefore(dividend.Key, daysBeforeExDate);
+            var buyDate = _readModel.GetDateBefore(dividend.Key, input.DaysBeforeExDate);
             var buyPrice = _readModel.HistoricalData[dividend.Key with { Time = buyDate }].Open;
             capital += CollectDividends(buyDate);
             var capitalBeforeBuy = capital;
             var stockAmt = capital / buyPrice;
 
-            //so impement w8 for selling
-            var sellDate = _readModel.GetDateAfter(dividend.Key, daysAfterExDate);
+            var sellDate = _readModel.GetDateAfter(dividend.Key, input.DaysAfterExDate);
             var sellPrice = _readModel.HistoricalData[dividend.Key with { Time = sellDate }].Open;
             var dividendGain = stockAmt * dividend.Value.Amount;
             _dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
             capital = stockAmt * sellPrice;
 
+            //when does stock recover? in days
             _trades.Add(new PortfolioDividendTrade
             {
                 Date = dividend.Key.Time, BuySellGain = capital - capitalBeforeBuy, EndCapital = capital,
-                DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol
+                DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol,
+                //by given symbol, price and time, find next time when price >= given
+                //in efficient implementation it should be just a part of time machine
+                RecoversInDays = -1
             });
-            Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
+            if (input.Verbose)
+                Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
         }
 
         capital += CollectDividends(input.CutOffDate);
         CalcCompounding(input, capital);
 
-        AddProjectedFutureDates(input.EndDate);
+        AddProjectedFutureDates(input);
         _trades.Add(new PortfolioDividendTrade { Date = input.CutOffDate, EndCapital = capital });
     }
 
@@ -84,13 +93,13 @@ public class DividendsStrategy
             $"Initial: {input.StartCapital}, End: {capital:F0}, Years: {years}, Compound per year: {compoundingPerYear * 100:F2}");
     }
 
-    private void AddProjectedFutureDates(DateTime endDate)
+    private void AddProjectedFutureDates(DividendsInputParams input)
     {
         //predict based on previous year - same quarter
         foreach (var dividend in _readModel.Dividends.Values)
         {
             var projectedDate = dividend.ExDate.AddYears(1);
-            if (projectedDate <= endDate.AddMonths(3) && projectedDate > endDate)
+            if (projectedDate <= input.CutOffDate && projectedDate > input.EndDate)
             {
                 _trades.Add(new PortfolioDividendTrade { Date = projectedDate, Symbol = dividend.Symbol, DividendPercent = dividend.Percent });
             }

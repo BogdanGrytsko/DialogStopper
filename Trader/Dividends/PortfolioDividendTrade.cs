@@ -8,4 +8,5 @@ public class PortfolioDividendTrade
     public decimal EndCapital { get; set; }
     public decimal DividendGain { get; set; }
     public decimal DividendPercent { get; set; }
+    public int RecoversInDays { get; set; }
 }
