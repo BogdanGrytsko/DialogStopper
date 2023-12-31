@@ -52,7 +52,6 @@ public class DividendsStrategy
 
             time = dividend.Key.Time;
 
-            //has to account for Monday --> Sunday! Need to buy on Friday
             var buyDate = _readModel.GetDateBefore(dividend.Key, input.DaysBeforeExDate);
             var buyPrice = _readModel.HistoricalData[dividend.Key with { Time = buyDate }].Open;
             capital += CollectDividends(buyDate);
@@ -65,14 +64,11 @@ public class DividendsStrategy
             _dividendsList.Add((dividend.Value.PaymentDate, dividendGain));
             capital = stockAmt * sellPrice;
 
-            //when does stock recover? in days
             _trades.Add(new PortfolioDividendTrade
             {
                 Date = dividend.Key.Time, BuySellGain = capital - capitalBeforeBuy, EndCapital = capital,
                 DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol,
-                //by given symbol, price and time, find next time when price >= given
-                //in efficient implementation it should be just a part of time machine
-                RecoversInDays = -1
+                RecoversInDays = _readModel.RecoveryAfterExDateInDays(dividend, buyPrice, buyDate)
             });
             if (input.Verbose)
                 Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");

@@ -2,7 +2,7 @@
 
 public class DividendsReadModel
 {
-    public Dictionary<SymbolTime, Candle> HistoricalData { get; private set; }
+    public SortedDictionary<SymbolTime, Candle> HistoricalData { get; private set; }
     public SortedDictionary<SymbolTime, Dividend> Dividends { get; private set; }
     private readonly TradingContext _context;
 
@@ -30,10 +30,10 @@ public class DividendsReadModel
         return sortedDictionary;
     }
 
-    private Dictionary<SymbolTime, Candle> GetHistoricalData(DateTime startDate, DateTime endDate)
+    private SortedDictionary<SymbolTime, Candle> GetHistoricalData(DateTime startDate, DateTime endDate)
     {
         var candles = _context.Candles.Where(x => DividendsStrategy.Symbols.Contains(x.Symbol) && x.Date >= startDate && x.Date <= endDate);
-        var dictionary = new Dictionary<SymbolTime, Candle>();
+        var dictionary = new SortedDictionary<SymbolTime, Candle>();
         foreach (var candle in candles)
         {
             dictionary.TryAdd(new SymbolTime(candle.Symbol, candle.Date), candle);
@@ -55,6 +55,7 @@ public class DividendsReadModel
 
     public DateTime GetDateBefore(SymbolTime symbolTime, int daysBeforeExDate)
     {
+        //has to account for Monday --> Sunday! Need to buy on Friday
         if (daysBeforeExDate > 20)
             throw new Exception("daysBeforeExDate > 20");
         var date = symbolTime.Time.AddDays(-daysBeforeExDate);
@@ -71,5 +72,13 @@ public class DividendsReadModel
         if (!HistoricalData.ContainsKey(symbolTime with { Time = date }))
             return GetDateAfter(symbolTime, daysAfterExDate + 1);
         return date;
+    }
+
+    public int RecoveryAfterExDateInDays(KeyValuePair<SymbolTime, Dividend> dividend, decimal buyPrice, DateTime buyDate)
+    {
+        //in efficient implementation it should be just a part of time machine
+        return ((HistoricalData.Values
+            .FirstOrDefault(x => x.Symbol == dividend.Key.Symbol && x.Date > buyDate && x.High >= buyPrice)?
+            .Date ?? DateTime.MaxValue) - dividend.Key.Time).Days;
     }
 }

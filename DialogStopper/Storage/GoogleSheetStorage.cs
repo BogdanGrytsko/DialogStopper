@@ -59,6 +59,10 @@ namespace DialogStopper.Storage
                     {
                         rowValues.Add(decimalVal.ToString("F2"));
                     }
+                    else if (value is DateTime dateTimeVal)
+                    {
+                        rowValues.Add(dateTimeVal.ToString("G"));
+                    }
                     else
                     {
                         rowValues.Add(value);                        
@@ -70,7 +74,7 @@ namespace DialogStopper.Storage
             var appendRequest = SheetsService.Spreadsheets.Values.Append(valueRange, sheetId, GetRange());
             appendRequest.ValueInputOption =
                 SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-            await appendRequest.ExecuteAsync();
+            var _= await appendRequest.ExecuteAsync();
         }
 
         private static bool IsEnumerable(PropertyInfo prop)
