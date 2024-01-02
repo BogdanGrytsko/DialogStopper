@@ -27,7 +27,10 @@ public class TradingContext : DbContext
             new("XOM", "Energy"), new("CVX", "Energy"), new("KO", "Consumer Defensive"),
             new("MCD", "Consumer cyclical"), new("T", "Communication services"), new("VZ", "Communication services"),
             new("JNJ", "Healthcare"), new("PFE", "Healthcare"), new("IBM", "Technology"),
-            new("ABBV", "Healthcare"), new("TGT", "Consumer Defensive")
+            new("ABBV", "Healthcare"), new("TGT", "Consumer Defensive"), new("COP", "Energy"),
+            new("F", "Consumer cyclical"), new ("HD", "Consumer cyclical"), new ("JPM", "Financial"),
+            new ("BAC", "Financial"), new("SBUX", "Consumer cyclical"), new("PG", "Consumer Defensive"),
+            new("CL","Consumer Defensive"), new("PEP", "Consumer Defensive"), new("PM", "Consumer Defensive")
         };
         for (int i = 0; i < symbolSectors.Count; i++)
         {
