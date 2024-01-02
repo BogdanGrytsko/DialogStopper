@@ -63,6 +63,10 @@ namespace DialogStopper.Storage
                     {
                         rowValues.Add(dateTimeVal.ToString("G"));
                     }
+                    else if (value is Enum enumVal)
+                    {
+                        rowValues.Add(enumVal.ToString());
+                    }
                     else
                     {
                         rowValues.Add(value);                        
