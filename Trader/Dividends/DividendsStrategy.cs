@@ -20,8 +20,9 @@ public class DividendsStrategy
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2022, 1, 1),
+            StartDate = new DateTime(2023, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
+            Symbols = Symbols,
             Verbose = true
         };
         _readModel.Load(input);
@@ -76,9 +77,19 @@ public class DividendsStrategy
 
         capital += CollectDividends(input.CutOffDate);
         CalcCompounding(input, capital);
+        CalcProfitPerSymbol();
 
         AddProjectedFutureDates(input);
         _trades.Add(new PortfolioDividendTrade { Date = input.CutOffDate, EndCapital = capital });
+    }
+
+    private void CalcProfitPerSymbol()
+    {
+        foreach (var group in _trades.GroupBy(x => x.Symbol))
+        {
+            var profitability = group.Sum(x => x.BuySellGain + x.DividendGain);
+            Console.WriteLine($"{group.Key}: {profitability:F0}; {_readModel.SymbolSector[group.Key]}");
+        }
     }
 
     private static void CalcCompounding(DividendsInputParams input, decimal capital)
