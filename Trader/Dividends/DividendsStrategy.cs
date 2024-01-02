@@ -45,9 +45,13 @@ public class DividendsStrategy
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
         var capital = input.StartCapital;
         var time = input.StartDate;
-        foreach (var dividend in _readModel.Dividends
-                     .Where(x => _readModel.SymbolSector[x.Key.Symbol] != "Healthcare"))
+        foreach (var dividend in _readModel.Dividends)
         {
+            var sector = _readModel.SymbolSector[dividend.Key.Symbol];
+            if (sector == Sector.Healthcare)
+            {
+                continue;
+            }
             //can't go backwards in time
             if (time >= dividend.Key.Time)
             {
@@ -75,7 +79,7 @@ public class DividendsStrategy
                 Date = dividend.Key.Time, BuySellGain = capital - capitalBeforeBuy, EndCapital = capital,
                 DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol,
                 RecoversInDays = _readModel.RecoveryAfterExDateInDays(dividend, buyPrice, buyDate),
-                Sector = _readModel.SymbolSector[dividend.Key.Symbol]
+                Sector = sector
             });
             if (input.Verbose)
                 Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");

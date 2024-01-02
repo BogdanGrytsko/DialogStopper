@@ -4,7 +4,7 @@ public class DividendsReadModel
 {
     public SortedDictionary<SymbolTime, Candle> HistoricalData { get; private set; }
     public SortedDictionary<SymbolTime, Dividend> Dividends { get; private set; }
-    public Dictionary<string, string> SymbolSector { get; private set; }
+    public Dictionary<string, Sector> SymbolSector { get; private set; }
     private readonly TradingContext _context;
 
     public DividendsReadModel(TradingContext context)
@@ -20,11 +20,11 @@ public class DividendsReadModel
         SymbolSector = GetSymbolSectorData(input);
     }
 
-    private Dictionary<string, string> GetSymbolSectorData(DividendsInputParams input)
+    private Dictionary<string, Sector> GetSymbolSectorData(DividendsInputParams input)
     {
         return _context.SymbolSectors
             .Where(x => input.Symbols.Contains(x.Symbol))
-            .ToDictionary(x => x.Symbol, x => x.SectorName);
+            .ToDictionary(x => x.Symbol, x => x.Sector);
     }
 
     private SortedDictionary<SymbolTime, Dividend> GetDividendsData(DividendsInputParams input)

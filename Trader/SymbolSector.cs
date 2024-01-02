@@ -4,15 +4,15 @@ namespace Trader;
 
 public class SymbolSector
 {
-    public SymbolSector(string symbol, string sectorName)
+    public SymbolSector(string symbol, Sector sector)
     {
         Symbol = symbol;
-        SectorName = sectorName;
+        Sector = sector;
     }
 
     public int Id { get; set; }
     [Required, StringLength(4)]
     public string Symbol { get; set; }
     [Required]
-    public string SectorName { get; set; }
+    public Sector Sector { get; set; }
 }

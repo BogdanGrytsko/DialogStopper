@@ -9,5 +9,5 @@ public class PortfolioDividendTrade
     public decimal DividendGain { get; set; }
     public decimal DividendPercent { get; set; }
     public int RecoversInDays { get; set; }
-    public string Sector { get; set; }
+    public Sector Sector { get; set; }
 }

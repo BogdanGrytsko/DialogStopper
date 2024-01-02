@@ -24,13 +24,13 @@ public class TradingContext : DbContext
             .HasIndex(p => new { p.Symbol }).IsUnique();
         var symbolSectors = new List<SymbolSector>
         {
-            new("XOM", "Energy"), new("CVX", "Energy"), new("KO", "Consumer Defensive"),
-            new("MCD", "Consumer cyclical"), new("T", "Communication services"), new("VZ", "Communication services"),
-            new("JNJ", "Healthcare"), new("PFE", "Healthcare"), new("IBM", "Technology"),
-            new("ABBV", "Healthcare"), new("TGT", "Consumer Defensive"), new("COP", "Energy"),
-            new("F", "Consumer cyclical"), new ("HD", "Consumer cyclical"), new ("JPM", "Financial"),
-            new ("BAC", "Financial"), new("SBUX", "Consumer cyclical"), new("PG", "Consumer Defensive"),
-            new("CL","Consumer Defensive"), new("PEP", "Consumer Defensive"), new("PM", "Consumer Defensive")
+            new("XOM", Sector.Energy), new("CVX", Sector.Energy), new("KO", Sector.ConsumerDefensive),
+            new("MCD", Sector.ConsumerCyclical), new("T", Sector.CommunicationServices), new("VZ", Sector.CommunicationServices),
+            new("JNJ", Sector.Healthcare), new("PFE", Sector.Healthcare), new("IBM", Sector.Technology),
+            new("ABBV", Sector.Healthcare), new("TGT", Sector.ConsumerDefensive), new("COP", Sector.Energy),
+            new("F", Sector.ConsumerCyclical), new ("HD", Sector.ConsumerCyclical), new ("JPM", Sector.Financial),
+            new ("BAC", Sector.Financial), new("SBUX", Sector.ConsumerCyclical), new("PG", Sector.ConsumerDefensive),
+            new("CL",Sector.ConsumerDefensive), new("PEP", Sector.ConsumerDefensive), new("PM", Sector.ConsumerDefensive)
         };
         for (int i = 0; i < symbolSectors.Count; i++)
         {
