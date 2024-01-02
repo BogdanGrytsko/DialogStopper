@@ -10,9 +10,11 @@ namespace Trader.Data;
 
 public class StooqCandleDataMover
 {
+    public static List<string> Symbols = new() { "COP", "F", "HD", "JPM", "BAC", "SBUX", "PG", "CL", "PEP", "PM" };
+
     public static async Task Move()
     {
-        var symbols = DividendsStrategy.Symbols;
+        var symbols = Symbols;
         await using var db = new TradingContext();
 
         var path = @"D:\\d_us_txt.zip";

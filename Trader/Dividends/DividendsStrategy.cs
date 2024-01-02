@@ -3,7 +3,11 @@
 public class DividendsStrategy
 {
     //either VZ or T
-    public static List<string> Symbols = new() { "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT" };
+    public static List<string> Symbols = new()
+    {
+        "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT",
+        "COP", "F", "HD", "JPM", "BAC", "SBUX", "PG", "CL", "PEP", "PM"
+    };
     
     private readonly List<(DateTime, decimal)> _dividendsList;
     private readonly List<PortfolioDividendTrade> _trades;
@@ -20,8 +24,9 @@ public class DividendsStrategy
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2022, 1, 1),
+            StartDate = new DateTime(2023, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
+            Symbols = Symbols,
             Verbose = true
         };
         _readModel.Load(input);
@@ -42,6 +47,11 @@ public class DividendsStrategy
         var time = input.StartDate;
         foreach (var dividend in _readModel.Dividends)
         {
+            var sector = _readModel.SymbolSector[dividend.Key.Symbol];
+            if (sector == Sector.Healthcare)
+            {
+                continue;
+            }
             //can't go backwards in time
             if (time >= dividend.Key.Time)
             {
@@ -68,7 +78,8 @@ public class DividendsStrategy
             {
                 Date = dividend.Key.Time, BuySellGain = capital - capitalBeforeBuy, EndCapital = capital,
                 DividendPercent = dividend.Value.Percent, DividendGain = dividendGain, Symbol = dividend.Key.Symbol,
-                RecoversInDays = _readModel.RecoveryAfterExDateInDays(dividend, buyPrice, buyDate)
+                RecoversInDays = _readModel.RecoveryAfterExDateInDays(dividend, buyPrice, buyDate),
+                Sector = sector
             });
             if (input.Verbose)
                 Console.WriteLine($"Date: {dividend.Key.Time:d}, Capital: {capital:F0}, Symbol: {dividend.Key.Symbol}");
@@ -76,9 +87,19 @@ public class DividendsStrategy
 
         capital += CollectDividends(input.CutOffDate);
         CalcCompounding(input, capital);
+        CalcProfitPerSymbol();
 
         AddProjectedFutureDates(input);
         _trades.Add(new PortfolioDividendTrade { Date = input.CutOffDate, EndCapital = capital });
+    }
+
+    private void CalcProfitPerSymbol()
+    {
+        foreach (var group in _trades.GroupBy(x => x.Symbol))
+        {
+            var profitability = group.Sum(x => x.BuySellGain + x.DividendGain);
+            Console.WriteLine($"{group.Key}: {profitability:F0}; {_readModel.SymbolSector[group.Key]}");
+        }
     }
 
     private static void CalcCompounding(DividendsInputParams input, decimal capital)

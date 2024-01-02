@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Trader;
 
@@ -11,9 +12,11 @@ using Trader;
 namespace Trader.Migrations
 {
     [DbContext(typeof(TradingContext))]
-    partial class TradingContextModelSnapshot : ModelSnapshot
+    [Migration("20240102130745_AddSymbolSector")]
+    partial class AddSymbolSector
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,8 +113,9 @@ namespace Trader.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Sector")
-                        .HasColumnType("int");
+                    b.Property<string>("SectorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Symbol")
                         .IsRequired()
@@ -129,128 +133,68 @@ namespace Trader.Migrations
                         new
                         {
                             Id = 1,
-                            Sector = 1,
+                            SectorName = "Energy",
                             Symbol = "XOM"
                         },
                         new
                         {
                             Id = 2,
-                            Sector = 1,
+                            SectorName = "Energy",
                             Symbol = "CVX"
                         },
                         new
                         {
                             Id = 3,
-                            Sector = 2,
+                            SectorName = "Consumer Defensive",
                             Symbol = "KO"
                         },
                         new
                         {
                             Id = 4,
-                            Sector = 3,
+                            SectorName = "Consumer cyclical",
                             Symbol = "MCD"
                         },
                         new
                         {
                             Id = 5,
-                            Sector = 4,
+                            SectorName = "Communication services",
                             Symbol = "T"
                         },
                         new
                         {
                             Id = 6,
-                            Sector = 4,
+                            SectorName = "Communication services",
                             Symbol = "VZ"
                         },
                         new
                         {
                             Id = 7,
-                            Sector = 5,
+                            SectorName = "Healthcare",
                             Symbol = "JNJ"
                         },
                         new
                         {
                             Id = 8,
-                            Sector = 5,
+                            SectorName = "Healthcare",
                             Symbol = "PFE"
                         },
                         new
                         {
                             Id = 9,
-                            Sector = 6,
+                            SectorName = "Technology",
                             Symbol = "IBM"
                         },
                         new
                         {
                             Id = 10,
-                            Sector = 5,
+                            SectorName = "Healthcare",
                             Symbol = "ABBV"
                         },
                         new
                         {
                             Id = 11,
-                            Sector = 2,
+                            SectorName = "Consumer Defensive",
                             Symbol = "TGT"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Sector = 1,
-                            Symbol = "COP"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Sector = 3,
-                            Symbol = "F"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Sector = 3,
-                            Symbol = "HD"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Sector = 7,
-                            Symbol = "JPM"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            Sector = 7,
-                            Symbol = "BAC"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            Sector = 3,
-                            Symbol = "SBUX"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            Sector = 2,
-                            Symbol = "PG"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            Sector = 2,
-                            Symbol = "CL"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            Sector = 2,
-                            Symbol = "PEP"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            Sector = 2,
-                            Symbol = "PM"
                         });
                 });
 
