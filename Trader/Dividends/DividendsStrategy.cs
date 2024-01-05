@@ -2,11 +2,13 @@
 
 public class DividendsStrategy
 {
+    //F, SBUX, HD are BAD in the last 3 years. PG also
     //either VZ or T
+    //COP intersects with XOM. Only last year JPM was bad
     public static List<string> Symbols = new()
     {
         "XOM", "CVX", "KO", "MCD", "T", "VZ", "JNJ", "PFE", "IBM", "ABBV", "TGT",
-        "COP", "F", "HD", "JPM", "BAC", "SBUX", "PG", "CL", "PEP", "PM"
+        "JPM", "BAC", "CL", "PEP", "PM"
     };
     
     private readonly List<(DateTime, decimal)> _dividendsList;
@@ -95,10 +97,11 @@ public class DividendsStrategy
 
     private void CalcProfitPerSymbol()
     {
-        foreach (var group in _trades.GroupBy(x => x.Symbol))
+        foreach (var group in _trades.GroupBy(x => x.Symbol)
+                     .OrderByDescending(x => x.Sum(y => y.Profit)))
         {
-            var profitability = group.Sum(x => x.BuySellGain + x.DividendGain);
-            Console.WriteLine($"{group.Key}: {profitability:F0}; {_readModel.SymbolSector[group.Key]}");
+            var profitability = group.Sum(x => x.Profit);
+            Console.WriteLine($"{group.Key}: {profitability:F0}; {group.First().Sector}");
         }
     }
 
@@ -118,7 +121,10 @@ public class DividendsStrategy
             var projectedDate = dividend.ExDate.AddYears(1);
             if (projectedDate <= input.CutOffDate && projectedDate > input.EndDate)
             {
-                _trades.Add(new PortfolioDividendTrade { Date = projectedDate, Symbol = dividend.Symbol, DividendPercent = dividend.Percent });
+                _trades.Add(new PortfolioDividendTrade
+                {
+                    Date = projectedDate, Symbol = dividend.Symbol, DividendPercent = dividend.Percent, Sector = _readModel.SymbolSector[dividend.Symbol]
+                });
             }
         }
     }
