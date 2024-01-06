@@ -2,10 +2,9 @@
 
 public class DividendsStrategy
 {
-    //F, SBUX, HD are BAD in the last 3 years. PG also
     //either VZ or T
-    //COP intersects with XOM. Only last year JPM was bad
-    //ABBV, PFE, JNJ - healthcare, bad
+    //either PEP or BAC
+    //COP intersects with XOM. 
     public static List<string> Symbols = new()
     {
         "XOM", "CVX", "KO", "MCD", "T", "VZ", "IBM", "TGT",
@@ -16,6 +15,7 @@ public class DividendsStrategy
     private readonly List<PortfolioDividendTrade> _trades;
     private readonly DividendsReadModel _readModel;
     private readonly SortedDictionary<SymbolTime, decimal> _profitDictionary;
+    public const int SumYear = 3000;
 
     public DividendsStrategy(DividendsReadModel dividendsReadModel)
     {
@@ -29,35 +29,37 @@ public class DividendsStrategy
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2023, 1, 1),
+            StartDate = new DateTime(2022, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
             Symbols = Symbols,
             Verbose = true
         };
         _readModel.Load(input);
 
-        SimpleTimeStrategy(input);
-        if (input.Verbose)
-            await GoogleSheetDividends.StoreData(_trades);
+        var endCapital = SimpleTimeStrategy(input);
+        CalcCompounding(input, endCapital);
+        AddProjectedFutureDates(input);
+        await GoogleSheetDividends.StoreData(_trades);
     }
 
-    public async Task RunPerYearPivotResults()
+    public async Task RunPerSymbolPerYear()
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2023, 1, 1),
+            StartDate = new DateTime(2011, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
-            Symbols = Symbols,
             Verbose = false
         };
         _readModel.Load(input);
 
         for (var i = input.StartDate; i < input.EndDate; i = i.AddYears(1))
         {
-            SimpleTimeStrategy(input with { StartDate = i, EndDate = i.AddYears(1)});
-            //todo can be extended to include all time sums per symbol
-            GetProfitPerSymbolPerYear();
-            _trades.Clear();
+            foreach (var symbol in _readModel.SymbolSector)
+            {
+                SimpleTimeStrategy(input with { StartDate = i, EndDate = i.AddYears(1), Symbols = new List<string> { symbol.Key }});
+                GetProfitPerSymbolPerYear();
+                _trades.Clear();
+            }
         }
         await GoogleSheetDividends.AddPivotData(_profitDictionary);
     }
@@ -67,18 +69,28 @@ public class DividendsStrategy
         foreach (var trade in _trades)
         {
             var key = new SymbolTime(trade.Symbol, new DateTime(trade.Date.Year, 1, 1));
-            if (!_profitDictionary.ContainsKey(key))
-                _profitDictionary.Add(key, 0);
-            _profitDictionary[key] += trade.Profit;
+            AddValue(key, trade.Profit);
+
+            var sumKey = new SymbolTime(trade.Symbol, new DateTime(SumYear, 1, 1));
+            AddValue(sumKey, trade.Profit);
         }
     }
 
-    private void SimpleTimeStrategy(DividendsInputParams input)
+    private void AddValue(SymbolTime key, decimal profit)
+    {
+        if (!_profitDictionary.ContainsKey(key))
+            _profitDictionary.Add(key, 0);
+        _profitDictionary[key] += profit;
+    }
+
+    private decimal SimpleTimeStrategy(DividendsInputParams input)
     {
         //strategy : buy at open 1(x) day before ExDate, Sale at open 0(y) days after ExDate
         var capital = input.StartCapital;
         var time = input.StartDate;
-        foreach (var dividend in _readModel.Dividends)
+        foreach (var dividend in _readModel.Dividends
+                     .Where(x => input.Symbols.Contains(x.Key.Symbol) 
+                                 && x.Key.Time >= input.StartDate && x.Key.Time < input.EndDate))
         {
             var sector = _readModel.SymbolSector[dividend.Key.Symbol];
             //can't go backwards in time
@@ -115,26 +127,12 @@ public class DividendsStrategy
         }
 
         capital += CollectDividends(input.CutOffDate);
-        CalcCompounding(input, capital);
-        CalcProfitPerSymbol();
-
-        //this is relevant only for calendar!
-        AddProjectedFutureDates(input);
         _trades.Add(new PortfolioDividendTrade
         {
-            Date = input.EndDate.AddDays(-1), Symbol = "All", EndCapital = capital,
+            Date = input.EndDate.AddDays(-1), Symbol = "A1l", EndCapital = capital,
             BuySellGain = _trades.Sum(x => x.BuySellGain), DividendGain = _trades.Sum(x => x.DividendGain)
         });
-    }
-
-    private void CalcProfitPerSymbol()
-    {
-        foreach (var group in _trades.GroupBy(x => x.Symbol)
-                     .OrderByDescending(x => x.Sum(y => y.Profit)))
-        {
-            var profitability = group.Sum(x => x.Profit);
-            Console.WriteLine($"{group.Key}: {profitability:F0}; {group.First().Sector}");
-        }
+        return capital;
     }
 
     private static void CalcCompounding(DividendsInputParams input, decimal capital)

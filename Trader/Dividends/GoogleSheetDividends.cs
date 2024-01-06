@@ -58,7 +58,6 @@ public class GoogleSheetDividends
         {
             headers.Add(header);
         }
-        valueRange.Values.Add(headers);
 
         foreach (var symbol in profit.Keys.Select(x => x.Symbol).Distinct().OrderBy(x => x))
         {
@@ -67,10 +66,13 @@ public class GoogleSheetDividends
             {
                 var key = new SymbolTime(symbol, time);
                 profit.TryGetValue(key, out var value);
-                GoogleSheetStorageHelper.AddValue(value, rowValues);
+                rowValues.Add(value.ToString("F0"));
             }
             valueRange.Values.Add(rowValues);
         }
+
+        var orderedByLast = valueRange.Values.OrderByDescending(x => decimal.Parse(x.Last().ToString())).ToList();
+        valueRange.Values = new List<IList<object>> { headers}.Concat(orderedByLast).ToList();
 
         var appendRequest = storage.SheetsService.Spreadsheets.Values.Append(valueRange, SheetId, storage.GetRange(times.Count));
         appendRequest.ValueInputOption =
