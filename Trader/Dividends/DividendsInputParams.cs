@@ -1,6 +1,6 @@
 ﻿namespace Trader.Dividends;
 
-public class DividendsInputParams
+public record DividendsInputParams
 {
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

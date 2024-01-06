@@ -1,4 +1,6 @@
 ﻿using DialogStopper.Storage;
+using Google.Apis.Sheets.v4.Data;
+using Google.Apis.Sheets.v4;
 using System.Globalization;
 
 namespace Trader.Dividends;
@@ -42,5 +44,39 @@ public class GoogleSheetDividends
             PaymentDate = dividendDto.PaymentDate,
             Amount = decimal.Parse(dividendDto.CashAmount, NumberStyles.Currency)
         });
+    }
+
+    public static async Task AddPivotData(SortedDictionary<SymbolTime, decimal> profit)
+    {
+        var storage = new GoogleSheetStorage<PortfolioDividendTrade>(SheetId) { SheetName = "PerYear" };
+        await storage.DeleteAsync(10, 1, 500);
+
+        var valueRange = new ValueRange { Values = new List<IList<object>>() };
+        var headers = new List<object> { "Symbol/Year" };
+        var times = profit.Keys.Select(x => x.Time).Distinct().ToList();
+        foreach (var header in times.Select(x => x.Year))
+        {
+            headers.Add(header);
+        }
+
+        foreach (var symbol in profit.Keys.Select(x => x.Symbol).Distinct().OrderBy(x => x))
+        {
+            var rowValues = new List<object> { symbol };
+            foreach (var time in times)
+            {
+                var key = new SymbolTime(symbol, time);
+                profit.TryGetValue(key, out var value);
+                rowValues.Add(value.ToString("F0"));
+            }
+            valueRange.Values.Add(rowValues);
+        }
+
+        var orderedByLast = valueRange.Values.OrderByDescending(x => decimal.Parse(x.Last().ToString())).ToList();
+        valueRange.Values = new List<IList<object>> { headers}.Concat(orderedByLast).ToList();
+
+        var appendRequest = storage.SheetsService.Spreadsheets.Values.Append(valueRange, SheetId, storage.GetRange(times.Count));
+        appendRequest.ValueInputOption =
+            SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+        var _ = await appendRequest.ExecuteAsync();
     }
 }

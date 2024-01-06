@@ -7,6 +7,7 @@ public class PortfolioDividendTrade
     public decimal BuySellGain { get; set; }
     public decimal EndCapital { get; set; }
     public decimal DividendGain { get; set; }
+    public decimal Profit => BuySellGain + DividendGain;
     public decimal DividendPercent { get; set; }
     public int RecoversInDays { get; set; }
     public Sector Sector { get; set; }

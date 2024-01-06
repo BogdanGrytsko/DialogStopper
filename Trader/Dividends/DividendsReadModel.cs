@@ -22,14 +22,21 @@ public class DividendsReadModel
 
     private Dictionary<string, Sector> GetSymbolSectorData(DividendsInputParams input)
     {
-        return _context.SymbolSectors
-            .Where(x => input.Symbols.Contains(x.Symbol))
-            .ToDictionary(x => x.Symbol, x => x.Sector);
+        var query = _context.SymbolSectors.AsQueryable();
+        if (input.Symbols != null)
+        {
+            query = query.Where(x => input.Symbols.Contains(x.Symbol));
+        }
+        return query.ToDictionary(x => x.Symbol, x => x.Sector);
     }
 
     private SortedDictionary<SymbolTime, Dividend> GetDividendsData(DividendsInputParams input)
     {
-        var dividends = _context.Dividends.Where(x => input.Symbols.Contains(x.Symbol) && x.ExDate >= input.StartDate && x.ExDate <= input.EndDate);
+        var dividends = _context.Dividends.Where(x => x.ExDate >= input.StartDate && x.ExDate <= input.EndDate);
+        if (input.Symbols != null)
+        {
+            dividends = dividends.Where(x => input.Symbols.Contains(x.Symbol));
+        }
         var sortedDictionary = new SortedDictionary<SymbolTime, Dividend>();
         foreach (var kvp in dividends)
         {
@@ -41,7 +48,11 @@ public class DividendsReadModel
 
     private SortedDictionary<SymbolTime, Candle> GetHistoricalData(DividendsInputParams input)
     {
-        var candles = _context.Candles.Where(x => input.Symbols.Contains(x.Symbol) && x.Date >= input.StartDate && x.Date <= input.EndDate);
+        var candles = _context.Candles.Where(x =>  x.Date >= input.StartDate && x.Date <= input.EndDate);
+        if (input.Symbols != null)
+        {
+            candles = candles.Where(x => input.Symbols.Contains(x.Symbol));
+        }
         var dictionary = new SortedDictionary<SymbolTime, Candle>();
         foreach (var candle in candles)
         {
