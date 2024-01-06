@@ -49,7 +49,7 @@ public class GoogleSheetDividends
     public static async Task AddPivotData(SortedDictionary<SymbolTime, decimal> profit)
     {
         var storage = new GoogleSheetStorage<PortfolioDividendTrade>(SheetId) { SheetName = "PerYear" };
-        await storage.DeleteAsync(10, 1, 500);
+        await storage.DeleteAsync(20, 1, 500);
 
         var valueRange = new ValueRange { Values = new List<IList<object>>() };
         var headers = new List<object> { "Symbol/Year" };

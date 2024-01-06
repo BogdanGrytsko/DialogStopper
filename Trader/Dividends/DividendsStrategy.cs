@@ -7,8 +7,8 @@ public class DividendsStrategy
     //COP intersects with XOM. 
     public static List<string> Symbols = new()
     {
-        "XOM", "CVX", "KO", "MCD", "T", "VZ", "IBM", "TGT",
-        "JPM", "BAC", "CL", "PEP", "PM"
+        "XOM", "CVX", "COP", "KO", "MCD", "T", "IBM",
+        "CL", "PEP", "PM", "SBUX"
     };
     
     private readonly List<(DateTime, decimal)> _dividendsList;
@@ -29,7 +29,7 @@ public class DividendsStrategy
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2022, 1, 1),
+            StartDate = new DateTime(2023, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
             Symbols = Symbols,
             Verbose = true
@@ -46,7 +46,7 @@ public class DividendsStrategy
     {
         var input = new DividendsInputParams
         {
-            StartDate = new DateTime(2011, 1, 1),
+            StartDate = new DateTime(2020, 1, 1),
             EndDate = new DateTime(2024, 1, 1),
             Verbose = false
         };
@@ -61,7 +61,19 @@ public class DividendsStrategy
                 _trades.Clear();
             }
         }
+
+        ApplyAverage();
         await GoogleSheetDividends.AddPivotData(_profitDictionary);
+    }
+
+    private void ApplyAverage()
+    {
+        var totalYears = _profitDictionary.Select(x => x.Key.Time.Year).Distinct().Count() - 1;
+        foreach (var pair in _profitDictionary.ToList()
+                     .Where(x => x.Key.Time == new DateTime(SumYear, 1, 1)))
+        {
+            _profitDictionary[pair.Key] /= totalYears;
+        }
     }
 
     private void GetProfitPerSymbolPerYear()
