@@ -11,8 +11,8 @@ namespace Trader
             //await DividendsDataMover.Move();
             var readModel = new DividendsReadModel(new TradingContext());
             var dividendsStrategy = new DividendsStrategy(readModel);
-            //await dividendsStrategy.RunCalendar();
-            await dividendsStrategy.RunPerSymbolPerYear();
+            await dividendsStrategy.RunCalendar();
+            //await dividendsStrategy.RunPerSymbolPerYear();
         }
 
         //static async Task Main(string[] args)
