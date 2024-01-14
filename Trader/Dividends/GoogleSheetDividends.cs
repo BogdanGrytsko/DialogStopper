@@ -23,6 +23,7 @@ public class GoogleSheetDividends
                 sortedDictionary.Add(key, kvp);
             else
             {
+                //TODO : w8, it's special + usual, it should just be added!
                 Console.WriteLine($"{key} had duplicates!");
             }
         }

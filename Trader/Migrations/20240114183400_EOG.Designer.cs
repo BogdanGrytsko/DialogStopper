@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Trader;
 
@@ -11,9 +12,11 @@ using Trader;
 namespace Trader.Migrations
 {
     [DbContext(typeof(TradingContext))]
-    partial class TradingContextModelSnapshot : ModelSnapshot
+    [Migration("20240114183400_EOG")]
+    partial class EOG
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,30 +260,6 @@ namespace Trader.Migrations
                             Id = 22,
                             Sector = 1,
                             Symbol = "EOG"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            Sector = 1,
-                            Symbol = "PXD"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            Sector = 1,
-                            Symbol = "FANG"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            Sector = 1,
-                            Symbol = "PSX"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            Sector = 1,
-                            Symbol = "VLO"
                         });
                 });
 

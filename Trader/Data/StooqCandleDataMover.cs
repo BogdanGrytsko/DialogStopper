@@ -10,7 +10,7 @@ namespace Trader.Data;
 
 public class StooqCandleDataMover
 {
-    public static List<string> Symbols = new() { "COP", "F", "HD", "JPM", "BAC", "SBUX", "PG", "CL", "PEP", "PM" };
+    public static List<string> Symbols = new() { "PXD", "FANG", "PSX", "VLO" };
 
     public static async Task Move()
     {
