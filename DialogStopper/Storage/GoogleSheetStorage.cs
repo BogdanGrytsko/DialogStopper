@@ -96,7 +96,7 @@ namespace DialogStopper.Storage
 
         public async Task<List<T>> GetAsync(int startRow = 1, int? endRow = null)
         {
-            var range = GetRange(startRow, endRow);
+            var range = GetRange(startRow: startRow, endRow: endRow);
             var request = SheetsService.Spreadsheets.Values.Get(_sheetId, range);
             var response = await request.ExecuteAsync();
             var values = response.Values;

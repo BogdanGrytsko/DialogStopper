@@ -8,7 +8,7 @@ public class DividendsStrategy
     public static List<string> Symbols = new()
     {
         "XOM", "CVX", "COP", "KO", "MCD", "T", "IBM",
-        "CL", "PEP", "PM", "SBUX"
+        "CL", "PEP", "PM", "SBUX", "EOG"
     };
     
     private readonly List<(DateTime, decimal)> _dividendsList;

@@ -30,7 +30,8 @@ public class TradingContext : DbContext
             new("ABBV", Sector.Healthcare), new("TGT", Sector.ConsumerDefensive), new("COP", Sector.Energy),
             new("F", Sector.ConsumerCyclical), new ("HD", Sector.ConsumerCyclical), new ("JPM", Sector.Financial),
             new ("BAC", Sector.Financial), new("SBUX", Sector.ConsumerCyclical), new("PG", Sector.ConsumerDefensive),
-            new("CL",Sector.ConsumerDefensive), new("PEP", Sector.ConsumerDefensive), new("PM", Sector.ConsumerDefensive)
+            new("CL",Sector.ConsumerDefensive), new("PEP", Sector.ConsumerDefensive), new("PM", Sector.ConsumerDefensive),
+            new("EOG", Sector.Energy)
         };
         for (int i = 0; i < symbolSectors.Count; i++)
         {
