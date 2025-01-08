@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 
+namespace HackatonEV2025;
+
 public class OpenAIApiCaller
 {
     private const string API_KEY = "0498b625c9cf4de2bf60c00fa0ee5fdd"; // Set your key here

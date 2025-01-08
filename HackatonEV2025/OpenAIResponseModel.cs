@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+namespace HackatonEV2025;
+
 public class OpenAIResponse
 {
     public string Id { get; set; }
