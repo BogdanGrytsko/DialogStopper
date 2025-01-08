@@ -21,7 +21,7 @@ public class OpenAIApiCaller
                       content = new object[] {
                           new {
                               type = "text",
-                              text = "You are an AI assistant that helps people find information."
+                              text = "You are an AI assistant that helps people analyze data."
                           }
                       }
                   },
