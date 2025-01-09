@@ -5,8 +5,13 @@ namespace HackatonEV2025;
 
 public class OpenAIApiCaller
 {
+    //MINI:
+    //private const string API_KEY = "0498b625c9cf4de2bf60c00fa0ee5fdd"; // Set your key here
+    //private const string ENDPOINT = "https://openai-track06-hackathon.openai.azure.com/openai/deployments/gpt-4o-mini-deployment/chat/completions?api-version=2024-02-15-preview";
+
+    //FULL:
     private const string API_KEY = "0498b625c9cf4de2bf60c00fa0ee5fdd"; // Set your key here
-    private const string ENDPOINT = "https://openai-track06-hackathon.openai.azure.com/openai/deployments/gpt-4o-mini-deployment/chat/completions?api-version=2024-02-15-preview";
+    private const string ENDPOINT = "https://openai-track06-hackathon.openai.azure.com/openai/deployments/gpt-4o-deployment/chat/completions?api-version=2024-08-01-preview";
 
     public async Task<OpenAIResponse> Execute(string prompt)
     {
