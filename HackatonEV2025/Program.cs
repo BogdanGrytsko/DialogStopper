@@ -11,9 +11,9 @@ var prompt = "Hey, I have a questionnaire which is filled by users." +
     "Could you analyze the text and based on it suggest in which questions(1-10) numeric answer isn't actually reflecting what is in free text, and what an approprioate number would be?" + Environment.NewLine +
     "I'll give an example: Question is '9. How would you rate the accountability of the company's leadership in upholding ESG principles?', and user has answered 10. However in free text Q11 he writes down: 'A well-rounded approach to ESG practices, but leadership accountability needs strengthening.'" + Environment.NewLine +
     "In such case there is a discrepancy, and suggested score(by you) could be 4." + Environment.NewLine +
-    "Below I provide rows with user answers. Please provide you comments and suggested score also in rows, keeping the rowId." + Environment.NewLine +
     "Please respond in the following format (1st row as an example) : \r\n" +
-    "| rowId | Comments | Suggested Score |\r\n|-------|----------|------------------|\r\n| 1     | your explanation | Q3: 5 (instead of 3), Q10: 5 (instead of 2) |";
+    "| rowId | Comments | Suggested Score |\r\n|-------|----------|------------------|\r\n| 1     | your explanation | Q3: 5 (instead of 3), Q10: 5 (instead of 2) |" + Environment.NewLine +
+    "Below I provide rows with user answers. Please provide you comments and suggested score also in rows, keeping the rowId." + Environment.NewLine;
 
 int rowId = 1;
 foreach (var responseBatch in responses.Chunk(10))
